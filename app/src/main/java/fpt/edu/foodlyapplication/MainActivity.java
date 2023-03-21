@@ -12,9 +12,9 @@ import android.widget.TextView;
 import fpt.edu.foodlyapplication.adapter.PageMainAdapter;
 
 public class MainActivity extends AppCompatActivity {
-    LinearLayout menuHome, menuCart, menuProfile;
-    ImageView imgHome, imgCart, imgProfile;
-    TextView txtHome, txtCart, txtProfile;
+    LinearLayout homeItem, cartItem, profileItem;
+    ImageView homeImg, cartImg, profileImg;
+    TextView homeText, cartText, profileText;
 
     ViewPager2 pageMain;
 
@@ -26,59 +26,59 @@ public class MainActivity extends AppCompatActivity {
         initPageMain();
 
         // Bottom menu item selected
-        menuHome.setOnClickListener(new View.OnClickListener() {
+        homeItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                menuHome.setBackgroundResource(R.drawable.bgr_item_bottom_menu);
-                menuCart.setBackgroundResource(R.color.White);
-                menuProfile.setBackgroundResource(R.color.White);
+                homeItem.setBackgroundResource(R.drawable.bgr_item_bottom_menu);
+                cartItem.setBackgroundResource(R.color.White);
+                profileItem.setBackgroundResource(R.color.White);
 
-                imgHome.setImageResource(R.drawable.ic_home_main_color);
-                imgCart.setImageResource(R.drawable.ic_cart_gray);
-                imgProfile.setImageResource(R.drawable.ic_profile_gray);
+                homeImg.setImageResource(R.drawable.ic_home_main_color);
+                cartImg.setImageResource(R.drawable.ic_cart_gray);
+                profileImg.setImageResource(R.drawable.ic_profile_gray);
 
-                txtHome.setVisibility(View.VISIBLE);
-                txtCart.setVisibility(View.GONE);
-                txtProfile.setVisibility(View.GONE);
+                homeText.setVisibility(View.VISIBLE);
+                cartText.setVisibility(View.GONE);
+                profileText.setVisibility(View.GONE);
 
                 pageMain.setCurrentItem(0, false);
             }
         });
 
-        menuCart.setOnClickListener(new View.OnClickListener() {
+        cartItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                menuHome.setBackgroundResource(R.color.White);
-                menuCart.setBackgroundResource(R.drawable.bgr_item_bottom_menu);
-                menuProfile.setBackgroundResource(R.color.White);
+                homeItem.setBackgroundResource(R.color.White);
+                cartItem.setBackgroundResource(R.drawable.bgr_item_bottom_menu);
+                profileItem.setBackgroundResource(R.color.White);
 
-                imgHome.setImageResource(R.drawable.ic_home_gray);
-                imgCart.setImageResource(R.drawable.ic_cart_main_color);
-                imgProfile.setImageResource(R.drawable.ic_profile_gray);
+                homeImg.setImageResource(R.drawable.ic_home_gray);
+                cartImg.setImageResource(R.drawable.ic_cart_main_color);
+                profileImg.setImageResource(R.drawable.ic_profile_gray);
 
-                txtHome.setVisibility(View.GONE);
-                txtCart.setVisibility(View.VISIBLE);
-                txtProfile.setVisibility(View.GONE);
+                homeText.setVisibility(View.GONE);
+                cartText.setVisibility(View.VISIBLE);
+                profileText.setVisibility(View.GONE);
 
                 pageMain.setCurrentItem(1, false);
 
             }
         });
 
-        menuProfile.setOnClickListener(new View.OnClickListener() {
+        profileItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                menuHome.setBackgroundResource(R.color.White);
-                menuCart.setBackgroundResource(R.color.White);
-                menuProfile.setBackgroundResource(R.drawable.bgr_item_bottom_menu);
+                homeItem.setBackgroundResource(R.color.White);
+                cartItem.setBackgroundResource(R.color.White);
+                profileItem.setBackgroundResource(R.drawable.bgr_item_bottom_menu);
 
-                imgHome.setImageResource(R.drawable.ic_home_gray);
-                imgCart.setImageResource(R.drawable.ic_cart_gray);
-                imgProfile.setImageResource(R.drawable.ic_profile_main_color);
+                homeImg.setImageResource(R.drawable.ic_home_gray);
+                cartImg.setImageResource(R.drawable.ic_cart_gray);
+                profileImg.setImageResource(R.drawable.ic_profile_main_color);
 
-                txtHome.setVisibility(View.GONE);
-                txtCart.setVisibility(View.GONE);
-                txtProfile.setVisibility(View.VISIBLE);
+                homeText.setVisibility(View.GONE);
+                cartText.setVisibility(View.GONE);
+                profileText.setVisibility(View.VISIBLE);
 
                 pageMain.setCurrentItem(2, false);
             }
@@ -92,15 +92,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initView() {
-        menuHome = findViewById(R.id.menuHome);
-        menuCart = findViewById(R.id.menuCart);
-        menuProfile = findViewById(R.id.menuProfile);
-        imgHome = findViewById(R.id.imgHome);
-        imgCart = findViewById(R.id.imgCart);
-        imgProfile = findViewById(R.id.imgProfile);
-        txtHome = findViewById(R.id.txtHome);
-        txtCart = findViewById(R.id.txtCart);
-        txtProfile = findViewById(R.id.txtProfile);
-        pageMain = findViewById(R.id.pageMain);
+        homeItem = (LinearLayout) findViewById(R.id.homeItem);
+        cartItem = (LinearLayout) findViewById(R.id.cartItem);
+        profileItem = (LinearLayout) findViewById(R.id.profileItem);
+        homeImg = (ImageView) findViewById(R.id.homeImg);
+        cartImg = (ImageView) findViewById(R.id.cartImg);
+        profileImg = (ImageView) findViewById(R.id.profileImg);
+        homeText = (TextView) findViewById(R.id.homeText);
+        cartText = (TextView) findViewById(R.id.cartText);
+        profileText = (TextView) findViewById(R.id.profileText);
+        pageMain = (ViewPager2) findViewById(R.id.pageMain);
     }
 }
