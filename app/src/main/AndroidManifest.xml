@@ -15,13 +15,13 @@
             android:name=".view.SignInActivity"
             android:exported="false" />
         <activity
-            android:name=".view.SplashActivity"
+            android:name=".MainActivity"
             android:exported="false" />
         <activity
             android:name=".view.SignUpActivity"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".view.SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
