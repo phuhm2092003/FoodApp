@@ -98,10 +98,12 @@ public class SignInActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Email or password is empty!", Toast.LENGTH_SHORT).show();
             Log.i(TAG, "Email or password is empty");
         } else {
+            // Login system
             RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
             StringRequest stringRequest = new StringRequest(Request.Method.POST, Sever.url_login, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
+                    // Get string return from sever
                     if (response.equals("Successful")) {
                         startActivity(new Intent(getApplicationContext(), MainActivity.class));
                         Toast.makeText(getApplicationContext(), "Login successful!", Toast.LENGTH_SHORT).show();
@@ -120,6 +122,7 @@ public class SignInActivity extends AppCompatActivity {
                 @Nullable
                 @Override
                 protected Map<String, String> getParams() throws AuthFailureError {
+                    // Push data to body-parser sever
                     HashMap<String, String> params = new HashMap<>();
                     params.put("email", email);
                     params.put("password", password);
