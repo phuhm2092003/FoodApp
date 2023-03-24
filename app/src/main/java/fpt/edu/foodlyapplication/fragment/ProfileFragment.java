@@ -31,6 +31,7 @@ import java.util.Map;
 
 import fpt.edu.foodlyapplication.MainActivity;
 import fpt.edu.foodlyapplication.R;
+import fpt.edu.foodlyapplication.view.UpdateInfoAccountActivity;
 import fpt.edu.foodlyapplication.model.User;
 import fpt.edu.foodlyapplication.utils.Sever;
 import fpt.edu.foodlyapplication.view.SignInActivity;
@@ -40,6 +41,7 @@ public class ProfileFragment extends Fragment {
     private MainActivity mainActivity;
     private static final String TAG = "ProfileFragment";
     private ConstraintLayout itemAccoutInfo, itemChangePassword, itemLogout;
+    public static final String KEY_USER = "EmailUser";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -53,7 +55,9 @@ public class ProfileFragment extends Fragment {
         itemAccoutInfo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getActivity().getApplicationContext(), "Update name", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getActivity().getApplicationContext(), UpdateInfoAccountActivity.class);
+                intent.putExtra(KEY_USER, mainActivity.getKeyUser());
+                startActivity(intent);
             }
         });
 
@@ -87,9 +91,9 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onResponse(String response) {
                 // Get string result from sever
-                if(response.equals("User Not Exists")){
+                if (response.equals("User Not Exists")) {
                     Log.i(TAG, "User Not Exists");
-                }else {
+                } else {
                     try {
                         JSONArray jsonArray = new JSONArray(response);
                         JSONObject jsonObject = jsonArray.getJSONObject(0);
@@ -114,7 +118,7 @@ public class ProfileFragment extends Fragment {
             public void onErrorResponse(VolleyError error) {
 
             }
-        }){
+        }) {
             @Nullable
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
