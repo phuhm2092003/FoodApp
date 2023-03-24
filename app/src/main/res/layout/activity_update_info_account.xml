@@ -69,7 +69,7 @@
                   android:textSize="14sp" />
 
               <androidx.constraintlayout.widget.ConstraintLayout
-                  android:id="@+id/updateFullNameBtn"
+                  android:id="@+id/updateBtn"
                   android:layout_width="match_parent"
                   android:layout_height="66dp"
                   android:layout_marginTop="22dp"

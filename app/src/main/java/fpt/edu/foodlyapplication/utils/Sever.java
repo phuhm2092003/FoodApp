@@ -5,5 +5,6 @@ public class Sever {
     public static final String url_login = http + "/login";
     public static final String url_register_account = http + "/registerAccounts";
     public static final String url_get_user_by_email = http + "/getUserByEmail";
+    public static final String url_update_fullname_user = http + "/updateFullName";
 
 }
