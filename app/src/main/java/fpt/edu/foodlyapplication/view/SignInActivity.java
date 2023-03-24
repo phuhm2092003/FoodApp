@@ -33,6 +33,7 @@ import fpt.edu.foodlyapplication.R;
 import fpt.edu.foodlyapplication.utils.Sever;
 
 public class SignInActivity extends AppCompatActivity {
+    public static final String KEY_USER = "EmailUser";
     private ImageView backBtn, passowrdToggle;
     private EditText emailEdt, passwordEdt;
     private ConstraintLayout loginBtn;
@@ -105,7 +106,9 @@ public class SignInActivity extends AppCompatActivity {
                 public void onResponse(String response) {
                     // Get string return from sever
                     if (response.equals("Successful")) {
-                        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                        intent.putExtra(KEY_USER, email);
+                        startActivity(intent);
                         Toast.makeText(getApplicationContext(), "Login successful!", Toast.LENGTH_SHORT).show();
                         Log.i(TAG, "Login successful");
                     } else {

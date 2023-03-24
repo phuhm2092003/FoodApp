@@ -4,19 +4,32 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import fpt.edu.foodlyapplication.adapter.PageMainAdapter;
+import fpt.edu.foodlyapplication.view.SignInActivity;
 
 public class MainActivity extends AppCompatActivity {
-    LinearLayout homeItem, cartItem, profileItem;
-    ImageView homeImg, cartImg, profileImg;
-    TextView homeText, cartText, profileText;
+    private LinearLayout homeItem, cartItem, profileItem;
+    private ImageView homeImg, cartImg, profileImg;
+    private TextView homeText, cartText, profileText;
 
-    ViewPager2 pageMain;
+    private ViewPager2 pageMain;
+    private String keyUser = "";
+    private static final String TAG = "MainActivity";
+
+    public String getKeyUser() {
+        return keyUser;
+    }
+
+    public void setKeyUser(String keyUser) {
+        this.keyUser = keyUser;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,7 +37,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         initView();
         initPageMain();
-
+        // Get email user from SignInActivity set keyUser
+        setKeyUser(getIntent().getStringExtra(SignInActivity.KEY_USER));
+        Log.i(TAG, "KEY_USER: "+getKeyUser());
         // Bottom menu item selected
         homeItem.setOnClickListener(new View.OnClickListener() {
             @Override
