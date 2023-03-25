@@ -15,9 +15,13 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:theme="@style/Theme.StatusGrayColor"
+            android:name=".ChangePasswordActivity"
+            android:exported="false" />
+        <activity
             android:name=".view.UpdateInfoAccountActivity"
             android:exported="false"
-            android:theme="@style/Theme.StatusGrayColor"/>
+            android:theme="@style/Theme.StatusGrayColor" />
         <activity
             android:name=".view.SignInActivity"
             android:exported="false"

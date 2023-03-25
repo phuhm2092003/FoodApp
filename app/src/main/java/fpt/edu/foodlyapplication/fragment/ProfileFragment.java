@@ -29,6 +29,7 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+import fpt.edu.foodlyapplication.ChangePasswordActivity;
 import fpt.edu.foodlyapplication.MainActivity;
 import fpt.edu.foodlyapplication.R;
 import fpt.edu.foodlyapplication.view.UpdateInfoAccountActivity;
@@ -64,7 +65,9 @@ public class ProfileFragment extends Fragment {
         itemChangePassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getActivity().getApplicationContext(), "Change Password", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getActivity().getApplicationContext(), ChangePasswordActivity.class);
+                intent.putExtra(KEY_USER, mainActivity.getKeyUser());
+                startActivity(intent);
             }
         });
 
