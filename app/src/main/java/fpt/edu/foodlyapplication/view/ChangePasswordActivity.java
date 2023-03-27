@@ -1,4 +1,4 @@
-package fpt.edu.foodlyapplication;
+package fpt.edu.foodlyapplication.view;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,16 +28,17 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+import fpt.edu.foodlyapplication.R;
 import fpt.edu.foodlyapplication.fragment.ProfileFragment;
 import fpt.edu.foodlyapplication.model.User;
 import fpt.edu.foodlyapplication.utils.Sever;
 
 public class ChangePasswordActivity extends AppCompatActivity {
+    private static final String TAG = "ChangePasswordActivity";
     private ImageView backBtn, passwordOldToggle, passwordNewToggle, passwordNewReplaceToggle;
     private EditText passwordOldEdt, passwordNewEdt, passwordNewReplaceEdt;
     private ConstraintLayout updateBtn, updateLaterBtn;
     private User user;
-    private static final String TAG = "ChangePasswordActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,19 +85,19 @@ public class ChangePasswordActivity extends AppCompatActivity {
         updateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.i(TAG, "Info User: "+ user.toString());
+                Log.i(TAG, "Info user update passowd: "+ user.toString());
                 String passwordOld = passwordOldEdt.getText().toString().trim();
                 String passwordNew = passwordNewEdt.getText().toString().trim();
                 String passwordNewReplace = passwordNewReplaceEdt.getText().toString().trim();
                 if(passwordOld.isEmpty() || passwordNew.isEmpty() || passwordNewReplace.isEmpty()){
-                    Toast.makeText(getApplicationContext(), "Please enter full information", Toast.LENGTH_SHORT).show();
-                    Log.i(TAG, "Data is empty");
+                    Toast.makeText(getApplicationContext(), "Please enter full information!", Toast.LENGTH_SHORT).show();
+                    Log.i(TAG, "Data is empty!");
                 }else if(!passwordOld.equals(user.getPassword())){
-                    Toast.makeText(getApplicationContext(), "Old password is wrong", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Old password is wrong!", Toast.LENGTH_SHORT).show();
                     Log.i(TAG, "Old password is wrong!");
                 }else if(!passwordNew.equals(passwordNewReplace)){
-                    Toast.makeText(getApplicationContext(), "Replace new password is wrong", Toast.LENGTH_SHORT).show();
-                    Log.i(TAG, "Replace new password is wrong");
+                    Toast.makeText(getApplicationContext(), "Replace new password is wrong!", Toast.LENGTH_SHORT).show();
+                    Log.i(TAG, "Replace new password is wrong!");
                 }else {
                     RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
                     StringRequest stringRequest = new StringRequest(Request.Method.POST, Sever.url_update_password, new Response.Listener<String>() {
@@ -108,6 +109,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
                                 Toast.makeText(getApplicationContext(), "Change password successful", Toast.LENGTH_SHORT).show();
                                 Log.i(TAG, "Change passowrd successful");
                                 getUser();
+                                // Clearn text
                                 passwordOldEdt.setText("");
                                 passwordNewEdt.setText("");
                                 passwordNewReplaceEdt.setText("");

@@ -30,11 +30,12 @@ import fpt.edu.foodlyapplication.R;
 import fpt.edu.foodlyapplication.utils.Sever;
 
 public class SignUpActivity extends AppCompatActivity {
+    private static final String TAG = "SignUpActivity";
+    public static final String FORMAT_EMAIL = "[a-zA-Z\\d._-]+@[a-z]+\\.+[a-z]+";
     private ImageView backBtn, passwordToggle;
     private EditText fullnameEdt, emailEdt, passwordEdt;
     private ConstraintLayout registerBtn;
     private TextView signInText;
-    private static final String TAG = "SignUpActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,7 +84,7 @@ public class SignUpActivity extends AppCompatActivity {
         emailEdt = (EditText) findViewById(R.id.emailEdt);
         passwordEdt = (EditText) findViewById(R.id.passwordEdt);
         registerBtn = (ConstraintLayout) findViewById(R.id.registerBtn);
-        signInText = findViewById(R.id.signInText);
+        signInText = (TextView) findViewById(R.id.signInText);
     }
 
     private void registerAccounts() {
@@ -93,10 +94,10 @@ public class SignUpActivity extends AppCompatActivity {
 
         if (fullname.isEmpty() || email.isEmpty() || password.isEmpty()) {
             Toast.makeText(getApplicationContext(), "Fullname or email or password is empty!", Toast.LENGTH_SHORT).show();
-            Log.i(TAG, "Data is empty");
-        } else if (!email.matches("[a-zA-Z\\d._-]+@[a-z]+\\.+[a-z]+")) {
+            Log.i(TAG, "Fullname or email or password is empty!");
+        } else if (!email.matches(FORMAT_EMAIL)) {
             Toast.makeText(getApplicationContext(), "Email wrong format!", Toast.LENGTH_SHORT).show();
-            Log.i(TAG, "Email is wrong!");
+            Log.i(TAG, "Email wrong format!");
         } else {
             // Register accounts
             RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
@@ -110,6 +111,7 @@ public class SignUpActivity extends AppCompatActivity {
                     } else if (response.equals("Successful")) {
                         Toast.makeText(getApplicationContext(), "Register new account successfull!", Toast.LENGTH_SHORT).show();
                         Log.i(TAG, "Register new account successfull!");
+                        // Clearn text
                         fullnameEdt.setText("");
                         emailEdt.setText("");
                         passwordEdt.setText("");
@@ -121,18 +123,18 @@ public class SignUpActivity extends AppCompatActivity {
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
+                    // Sever error
                     Log.i(TAG, error.toString());
                 }
             }) {
                 @Nullable
                 @Override
                 protected Map<String, String> getParams() throws AuthFailureError {
-                    // Push data to body-parser sever
+                    // Push data (email, fullname password) to body-parser sever
                     HashMap<String, String> params = new HashMap<>();
                     params.put("email", email);
                     params.put("fullname", fullname);
                     params.put("password", password);
-
                     return params;
                 }
             };

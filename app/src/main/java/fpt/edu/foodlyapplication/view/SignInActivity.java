@@ -33,12 +33,12 @@ import fpt.edu.foodlyapplication.R;
 import fpt.edu.foodlyapplication.utils.Sever;
 
 public class SignInActivity extends AppCompatActivity {
+    private static final String TAG = "SignInActivity";
     public static final String KEY_USER = "EmailUser";
     private ImageView backBtn, passowrdToggle;
     private EditText emailEdt, passwordEdt;
     private ConstraintLayout loginBtn;
     private TextView signUpText;
-    private static final String TAG = "SignInActivity";
 
 
     @Override
@@ -77,7 +77,7 @@ public class SignInActivity extends AppCompatActivity {
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                login();
+                checkSignIn();
             }
         });
 
@@ -92,12 +92,13 @@ public class SignInActivity extends AppCompatActivity {
         signUpText = (TextView) findViewById(R.id.signUpText);
     }
 
-    private void login() {
+    private void checkSignIn() {
         String email = emailEdt.getText().toString().trim();
         String password = passwordEdt.getText().toString().trim();
         if (email.isEmpty() || password.isEmpty()) {
+            // Check empty data
             Toast.makeText(getApplicationContext(), "Email or password is empty!", Toast.LENGTH_SHORT).show();
-            Log.i(TAG, "Email or password is empty");
+            Log.i(TAG, "Email or password is empty!");
         } else {
             // Login system
             RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
@@ -110,22 +111,23 @@ public class SignInActivity extends AppCompatActivity {
                         intent.putExtra(KEY_USER, email);
                         startActivity(intent);
                         Toast.makeText(getApplicationContext(), "Login successful!", Toast.LENGTH_SHORT).show();
-                        Log.i(TAG, "Login successful");
+                        Log.i(TAG, "Login successful!");
                     } else {
                         Toast.makeText(getApplicationContext(), "Login failed!", Toast.LENGTH_SHORT).show();
-                        Log.i(TAG, "Login failed");
+                        Log.i(TAG, "Login failed!");
                     }
                 }
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
+                    // Sever error
                     Log.i(TAG, error.toString());
                 }
             }) {
                 @Nullable
                 @Override
                 protected Map<String, String> getParams() throws AuthFailureError {
-                    // Push data to body-parser sever
+                    // Push data (email & passowrd) to body-parser sever
                     HashMap<String, String> params = new HashMap<>();
                     params.put("email", email);
                     params.put("password", password);

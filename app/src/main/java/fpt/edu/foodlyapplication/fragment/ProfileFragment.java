@@ -12,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -29,7 +28,7 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-import fpt.edu.foodlyapplication.ChangePasswordActivity;
+import fpt.edu.foodlyapplication.view.ChangePasswordActivity;
 import fpt.edu.foodlyapplication.MainActivity;
 import fpt.edu.foodlyapplication.R;
 import fpt.edu.foodlyapplication.view.UpdateInfoAccountActivity;
@@ -38,11 +37,12 @@ import fpt.edu.foodlyapplication.utils.Sever;
 import fpt.edu.foodlyapplication.view.SignInActivity;
 
 public class ProfileFragment extends Fragment {
+    public static final String KEY_USER = "EmailUser";
+    private static final String TAG = "ProfileFragment";
     private TextView tvFullname, tvEmail;
     private MainActivity mainActivity;
-    private static final String TAG = "ProfileFragment";
     private ConstraintLayout itemAccoutInfo, itemChangePassword, itemLogout;
-    public static final String KEY_USER = "EmailUser";
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -100,6 +100,7 @@ public class ProfileFragment extends Fragment {
                     try {
                         JSONArray jsonArray = new JSONArray(response);
                         JSONObject jsonObject = jsonArray.getJSONObject(0);
+                        // Get object by email
                         User user = new User();
                         user.setEmail(jsonObject.getString("Email"));
                         user.setFullname(jsonObject.getString("FullName"));
@@ -119,12 +120,14 @@ public class ProfileFragment extends Fragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
+                // Sever error
+                Log.i(TAG, error.toString());
             }
         }) {
             @Nullable
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
+                // Push data (email) to body-parser sever
                 HashMap<String, String> params = new HashMap<>();
                 params.put("email", mainActivity.getKeyUser());
 

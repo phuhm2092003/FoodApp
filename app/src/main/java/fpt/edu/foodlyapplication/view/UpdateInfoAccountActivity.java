@@ -33,10 +33,10 @@ import fpt.edu.foodlyapplication.model.User;
 import fpt.edu.foodlyapplication.utils.Sever;
 
 public class UpdateInfoAccountActivity extends AppCompatActivity {
+    private static final String TAG = "UpdateInfoAccountActivity";
     private ImageView backBtn;
     private EditText fullnameEdt;
     private ConstraintLayout updateBtn, updateLaterBtn;
-    private static final String TAG = "UpdateInfoAccountActivity";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,11 +77,11 @@ public class UpdateInfoAccountActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(String response) {
                     if(response.equals("User Not Exists")){
-                        Toast.makeText(getApplicationContext(), "User Not Exists", Toast.LENGTH_SHORT).show();
-                        Log.i(TAG, "User Not Exists");
+                        Toast.makeText(getApplicationContext(), "User Not Exists!", Toast.LENGTH_SHORT).show();
+                        Log.i(TAG, "User Not Exists!");
                     }else if(response.equals("Successful")){
-                        Toast.makeText(getApplicationContext(), "Update fullname successful", Toast.LENGTH_SHORT).show();
-                        Log.i(TAG, "Update full name successful");
+                        Toast.makeText(getApplicationContext(), "Update fullname successful!", Toast.LENGTH_SHORT).show();
+                        Log.i(TAG, "Update full name successful!");
                     }else {
                         Log.i(TAG, "Erorr");
                     }
@@ -89,12 +89,14 @@ public class UpdateInfoAccountActivity extends AppCompatActivity {
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
+                    //Sever error
                     Log.i(TAG, error.toString());
                 }
             }){
                 @Nullable
                 @Override
                 protected Map<String, String> getParams() throws AuthFailureError {
+                    // Push data(email,newName) to body-parser sever
                     HashMap<String, String> params = new HashMap<>();
                     params.put("email",emailUser);
                     params.put("fullname", fullname);
@@ -136,7 +138,7 @@ public class UpdateInfoAccountActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
+                Log.i(TAG, error.toString());
             }
         }) {
             @Nullable
@@ -144,7 +146,6 @@ public class UpdateInfoAccountActivity extends AppCompatActivity {
             protected Map<String, String> getParams() throws AuthFailureError {
                 HashMap<String, String> params = new HashMap<>();
                 params.put("email", emailUser);
-
                 return params;
             }
         };
