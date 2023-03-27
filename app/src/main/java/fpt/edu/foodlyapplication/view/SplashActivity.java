@@ -10,19 +10,20 @@ import fpt.edu.foodlyapplication.R;
 
 public class SplashActivity extends AppCompatActivity {
 
-    public static final int SCREEN_TIME_OUT = 2000;
+    public static final int SCREEN_TIMEOUT = 2000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
+        // Navigate to SignInActivity after a delay
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                startActivity(new Intent(getApplicationContext(), SignInActivity.class));
+                startActivity(new Intent(SplashActivity.this, SignInActivity.class));
             }
-        }, SCREEN_TIME_OUT);
+        }, SCREEN_TIMEOUT);
     }
 }
