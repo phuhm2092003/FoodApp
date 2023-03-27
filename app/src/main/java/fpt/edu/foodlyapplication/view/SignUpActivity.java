@@ -31,115 +31,151 @@ import fpt.edu.foodlyapplication.utils.Sever;
 
 public class SignUpActivity extends AppCompatActivity {
     private static final String TAG = "SignUpActivity";
-    public static final String FORMAT_EMAIL = "[a-zA-Z\\d._-]+@[a-z]+\\.+[a-z]+";
-    private ImageView backBtn, passwordToggle;
-    private EditText fullnameEdt, emailEdt, passwordEdt;
-    private ConstraintLayout registerBtn;
-    private TextView signInText;
+    public static final String EMAIL_REGEX_PATTERN = "[a-zA-Z\\d._-]+@[a-z]+\\.+[a-z]+";
+
+    public static final String EMPTY_INPUT_MESSAGE = "Fullname or email or password is empty!";
+    public static final String INVALID_EMAIL_MESSAGE = "Please enter a valid email address!";
+    public static final String USER_EXISTS_MESSAGE = "User already exists!";
+    public static final String REGISTER_SUCCESS_MESSAGE = "Register new account successfull!";
+    public static final String REGISTER_FAILED_MESSAGE = "Register new account failed!";
+    public static final String RESPONSE_USER_EXISTS = "User Exists";
+    public static final String RESPONSE_SUCCESS = "Successful";
+
+    public static final String PARAM_EMAIL = "email";
+    public static final String PARAM_FULLNAME = "fullname";
+    public static final String PARAM_PASSWORD = "password";
+    public static final String SEVER_URL_REGISTER_ACCOUNT = Sever.url_register_account;
+
+    private ImageView backButton, passwordToggleButton;
+    private EditText fullnameEditText, emailEditText, passwordEditText;
+    private ConstraintLayout registerButton;
+    private TextView signInTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
         initView();
-        backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(getApplicationContext(), SignInActivity.class));
-            }
-        });
-
-        passwordToggle.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (passwordEdt.getTransformationMethod().equals(HideReturnsTransformationMethod.getInstance())) {
-                    passwordEdt.setTransformationMethod(PasswordTransformationMethod.getInstance());
-                    passwordToggle.setImageResource(R.drawable.ic_password_hide);
-                } else {
-                    passwordEdt.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
-                    passwordToggle.setImageResource(R.drawable.ic_password_show);
-                }
-            }
-        });
-
-        signInText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(getApplicationContext(), SignInActivity.class));
-            }
-        });
-
-        registerBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                registerAccounts();
-            }
-        });
+        setListeners();
     }
 
     private void initView() {
-        backBtn = (ImageView) findViewById(R.id.backBtn);
-        passwordToggle = (ImageView) findViewById(R.id.passwordToggle);
-        fullnameEdt = (EditText) findViewById(R.id.fullnameEdt);
-        emailEdt = (EditText) findViewById(R.id.emailEdt);
-        passwordEdt = (EditText) findViewById(R.id.passwordEdt);
-        registerBtn = (ConstraintLayout) findViewById(R.id.registerBtn);
-        signInText = (TextView) findViewById(R.id.signInText);
+        backButton = (ImageView) findViewById(R.id.backButton);
+        passwordToggleButton = (ImageView) findViewById(R.id.passwordToggleButton);
+        fullnameEditText = (EditText) findViewById(R.id.fullnameEditText);
+        emailEditText = (EditText) findViewById(R.id.emailEditText);
+        passwordEditText = (EditText) findViewById(R.id.passwordEditText);
+        registerButton = (ConstraintLayout) findViewById(R.id.registerButton);
+        signInTextView = (TextView) findViewById(R.id.signInTextView);
     }
 
-    private void registerAccounts() {
-        String fullname = fullnameEdt.getText().toString().trim();
-        String email = emailEdt.getText().toString().trim();
-        String password = passwordEdt.getText().toString().trim();
+    private void setListeners() {
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getApplicationContext(), SignInActivity.class));
+            }
+        });
 
-        if (fullname.isEmpty() || email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(getApplicationContext(), "Fullname or email or password is empty!", Toast.LENGTH_SHORT).show();
-            Log.i(TAG, "Fullname or email or password is empty!");
-        } else if (!email.matches(FORMAT_EMAIL)) {
-            Toast.makeText(getApplicationContext(), "Email wrong format!", Toast.LENGTH_SHORT).show();
-            Log.i(TAG, "Email wrong format!");
-        } else {
-            // Register accounts
-            RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-            StringRequest stringRequest = new StringRequest(Request.Method.POST, Sever.url_register_account, new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-                    // Get string return from sever
-                    if (response.equals("User Exists")) {
-                        Toast.makeText(getApplicationContext(), "User already exists!", Toast.LENGTH_SHORT).show();
-                        Log.i(TAG, "User already exists!");
-                    } else if (response.equals("Successful")) {
-                        Toast.makeText(getApplicationContext(), "Register new account successfull!", Toast.LENGTH_SHORT).show();
-                        Log.i(TAG, "Register new account successfull!");
-                        // Clearn text
-                        fullnameEdt.setText("");
-                        emailEdt.setText("");
-                        passwordEdt.setText("");
-                    } else {
-                        Toast.makeText(getApplicationContext(), "Register new account failed!", Toast.LENGTH_SHORT).show();
-                        Log.i(TAG, "Register new account failed!");
-                    }
+        passwordToggleButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (passwordEditText.getTransformationMethod().equals(HideReturnsTransformationMethod.getInstance())) {
+                    passwordEditText.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                    passwordToggleButton.setImageResource(R.drawable.ic_password_hide);
+                } else {
+                    passwordEditText.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                    passwordToggleButton.setImageResource(R.drawable.ic_password_show);
                 }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    // Sever error
-                    Log.i(TAG, error.toString());
-                }
-            }) {
-                @Nullable
-                @Override
-                protected Map<String, String> getParams() throws AuthFailureError {
-                    // Push data (email, fullname password) to body-parser sever
-                    HashMap<String, String> params = new HashMap<>();
-                    params.put("email", email);
-                    params.put("fullname", fullname);
-                    params.put("password", password);
-                    return params;
-                }
-            };
-            requestQueue.add(stringRequest);
+            }
+        });
+
+        signInTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getApplicationContext(), SignInActivity.class));
+            }
+        });
+
+        registerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                validateDataInput();
+            }
+        });
+    }
+
+    private void validateDataInput() {
+        String fullname = fullnameEditText.getText().toString().trim();
+        String email = emailEditText.getText().toString().trim();
+        String password = passwordEditText.getText().toString().trim();
+
+        if (isEmptyFields(fullname, email, password)) {
+            Toast.makeText(getApplicationContext(), EMPTY_INPUT_MESSAGE, Toast.LENGTH_SHORT).show();
+            Log.e(TAG, EMPTY_INPUT_MESSAGE);
+            return;
         }
+
+        if (isInvalidEmail(email)) {
+            Toast.makeText(getApplicationContext(), INVALID_EMAIL_MESSAGE, Toast.LENGTH_SHORT).show();
+            Log.e(TAG, INVALID_EMAIL_MESSAGE);
+            return;
+        }
+        registerAccounts(fullname, email, password);
+    }
+
+    private void registerAccounts(String fullname, String email, String password) {
+        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+        StringRequest registerRequest = new StringRequest(Request.Method.POST, SEVER_URL_REGISTER_ACCOUNT, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                // Get response from sever
+                if (response.equals(RESPONSE_USER_EXISTS)) {
+                    Toast.makeText(getApplicationContext(), USER_EXISTS_MESSAGE, Toast.LENGTH_SHORT).show();
+                    Log.i(TAG, USER_EXISTS_MESSAGE);
+                } else if (response.equals(RESPONSE_SUCCESS)) {
+                    Toast.makeText(getApplicationContext(), REGISTER_SUCCESS_MESSAGE, Toast.LENGTH_SHORT).show();
+                    Log.i(TAG, REGISTER_SUCCESS_MESSAGE);
+                    // Clear text
+                    clearTextFields();
+                } else {
+                    Toast.makeText(getApplicationContext(), REGISTER_FAILED_MESSAGE, Toast.LENGTH_SHORT).show();
+                    Log.i(TAG, REGISTER_FAILED_MESSAGE);
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                // Sever error
+                Log.e(TAG, error.toString());
+            }
+        }) {
+            @Nullable
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                // Push data (email, fullname password) to body-parser sever
+                HashMap<String, String> params = new HashMap<>();
+                params.put(PARAM_EMAIL, email);
+                params.put(PARAM_FULLNAME, fullname);
+                params.put(PARAM_PASSWORD, password);
+                return params;
+            }
+        };
+        requestQueue.add(registerRequest);
+    }
+
+    private void clearTextFields() {
+        fullnameEditText.setText("");
+        emailEditText.setText("");
+        passwordEditText.setText("");
+    }
+
+    private boolean isInvalidEmail(String email) {
+        return !email.matches(EMAIL_REGEX_PATTERN);
+    }
+
+    private boolean isEmptyFields(String fullname, String email, String password) {
+        return fullname.isEmpty() || email.isEmpty() || password.isEmpty();
     }
 
 }

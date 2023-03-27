@@ -20,15 +20,15 @@ public class MainActivity extends AppCompatActivity {
     private TextView homeText, cartText, profileText;
 
     private ViewPager2 pageMain;
-    private String keyUser = "";
+    private String userEmailKey = "";
     private static final String TAG = "MainActivity";
 
     public String getKeyUser() {
-        return keyUser;
+        return userEmailKey;
     }
 
-    public void setKeyUser(String keyUser) {
-        this.keyUser = keyUser;
+    public void setKeyUser(String userEmailKey) {
+        this.userEmailKey = userEmailKey;
     }
 
     @Override
@@ -38,8 +38,8 @@ public class MainActivity extends AppCompatActivity {
         initView();
         initPageMain();
         // Get email user from SignInActivity set keyUser
-        setKeyUser(getIntent().getStringExtra(SignInActivity.KEY_USER));
-        Log.i(TAG, "KEY_USER: "+getKeyUser());
+        setKeyUser(getIntent().getStringExtra(SignInActivity.EXTRA_USER_EMAIL));
+        Log.i(TAG, "KEY_USER: " + getKeyUser());
         // Bottom menu item selected
         homeItem.setOnClickListener(new View.OnClickListener() {
             @Override

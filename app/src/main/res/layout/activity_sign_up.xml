@@ -22,7 +22,7 @@
             android:paddingBottom="90dp">
 
             <ImageView
-                android:id="@+id/backBtn"
+                android:id="@+id/backButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="35dp"
@@ -42,7 +42,7 @@
                 android:textColor="@color/MainBlack"
                 android:textSize="38sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/backBtn" />
+                app:layout_constraintTop_toBottomOf="@id/backButton" />
 
             <LinearLayout
                 android:id="@+id/linerlayoutFormSignIn"
@@ -57,7 +57,7 @@
                 app:layout_constraintTop_toBottomOf="@id/title">
 
                 <EditText
-                    android:id="@+id/fullnameEdt"
+                    android:id="@+id/fullnameEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/shape_radius15_white"
@@ -74,7 +74,7 @@
 
                 <EditText
                     android:layout_marginTop="20dp"
-                    android:id="@+id/emailEdt"
+                    android:id="@+id/emailEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/shape_radius15_white"
@@ -96,7 +96,7 @@
                     android:layout_marginTop="20dp">
 
                     <EditText
-                        android:id="@+id/passwordEdt"
+                        android:id="@+id/passwordEditText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/shape_radius15_white"
@@ -117,18 +117,18 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <ImageView
-                        android:id="@+id/passwordToggle"
+                        android:id="@+id/passwordToggleButton"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_marginEnd="27dp"
                         android:src="@drawable/ic_password_hide"
-                        app:layout_constraintBottom_toBottomOf="@id/passwordEdt"
-                        app:layout_constraintEnd_toEndOf="@id/passwordEdt"
-                        app:layout_constraintTop_toTopOf="@id/passwordEdt" />
+                        app:layout_constraintBottom_toBottomOf="@id/passwordEditText"
+                        app:layout_constraintEnd_toEndOf="@id/passwordEditText"
+                        app:layout_constraintTop_toTopOf="@id/passwordEditText" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/registerBtn"
+                    android:id="@+id/registerButton"
                     android:layout_width="match_parent"
                     android:layout_height="66dp"
                     android:layout_marginTop="22dp"
@@ -166,7 +166,7 @@
                         android:textSize="16sp" />
 
                     <TextView
-                        android:id="@+id/signInText"
+                        android:id="@+id/signInTextView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="2dp"

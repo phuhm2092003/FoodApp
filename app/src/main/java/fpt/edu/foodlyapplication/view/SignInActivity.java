@@ -34,11 +34,18 @@ import fpt.edu.foodlyapplication.utils.Sever;
 
 public class SignInActivity extends AppCompatActivity {
     private static final String TAG = "SignInActivity";
-    public static final String KEY_USER = "EmailUser";
-    private ImageView backBtn, passowrdToggle;
-    private EditText emailEdt, passwordEdt;
-    private ConstraintLayout loginBtn;
-    private TextView signUpText;
+    public static final String PARAM_EMAIL = "email";
+    public static final String PARAM_PASSWORD = "password";
+    public static final String EXTRA_USER_EMAIL = "EmailUser";
+    public static final String RESPONSE_SUCCESS = "Successful";
+    public static final String LOGIN_FAILED_MESSAGE = "Login failed!";
+    public static final String LOGIN_SUCCESS_MESSAGE = "Login successful!";
+    private static final String EMPTY_INPUT_MESSAGE = "Email or password is empty!";
+    public static final String SEVER_URL_LOGIN = Sever.url_login;
+    private ImageView backButton, passwordToggleButton;
+    private EditText emailEditText, passwordEditText;
+    private ConstraintLayout loginButton;
+    private TextView signUpTextView;
 
 
     @Override
@@ -46,95 +53,104 @@ public class SignInActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
         initView();
-
-        backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(getApplicationContext(), SplashActivity.class));
-            }
-        });
-
-        passowrdToggle.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (passwordEdt.getTransformationMethod().equals(HideReturnsTransformationMethod.getInstance())) {
-                    passwordEdt.setTransformationMethod(PasswordTransformationMethod.getInstance());
-                    passowrdToggle.setImageResource(R.drawable.ic_password_hide);
-                } else {
-                    passwordEdt.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
-                    passowrdToggle.setImageResource(R.drawable.ic_password_show);
-                }
-            }
-        });
-
-        signUpText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(getApplicationContext(), SignUpActivity.class));
-            }
-        });
-
-        loginBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                checkSignIn();
-            }
-        });
-
+        setListeners();
     }
+
 
     private void initView() {
-        backBtn = (ImageView) findViewById(R.id.backBtn);
-        passowrdToggle = (ImageView) findViewById(R.id.passwordToggle);
-        emailEdt = (EditText) findViewById(R.id.emailEdt);
-        passwordEdt = (EditText) findViewById(R.id.passwordEdt);
-        loginBtn = (ConstraintLayout) findViewById(R.id.loginBtn);
-        signUpText = (TextView) findViewById(R.id.signUpText);
+        backButton = (ImageView) findViewById(R.id.backButton);
+        passwordToggleButton = (ImageView) findViewById(R.id.passwordToggleButton);
+        emailEditText = (EditText) findViewById(R.id.emailEditText);
+        passwordEditText = (EditText) findViewById(R.id.passwordEditText);
+        loginButton = (ConstraintLayout) findViewById(R.id.loginButton);
+        signUpTextView = (TextView) findViewById(R.id.signUpTextView);
     }
 
-    private void checkSignIn() {
-        String email = emailEdt.getText().toString().trim();
-        String password = passwordEdt.getText().toString().trim();
-        if (email.isEmpty() || password.isEmpty()) {
-            // Check empty data
-            Toast.makeText(getApplicationContext(), "Email or password is empty!", Toast.LENGTH_SHORT).show();
-            Log.i(TAG, "Email or password is empty!");
-        } else {
-            // Login system
-            RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-            StringRequest stringRequest = new StringRequest(Request.Method.POST, Sever.url_login, new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-                    // Get string return from sever
-                    if (response.equals("Successful")) {
-                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                        intent.putExtra(KEY_USER, email);
-                        startActivity(intent);
-                        Toast.makeText(getApplicationContext(), "Login successful!", Toast.LENGTH_SHORT).show();
-                        Log.i(TAG, "Login successful!");
-                    } else {
-                        Toast.makeText(getApplicationContext(), "Login failed!", Toast.LENGTH_SHORT).show();
-                        Log.i(TAG, "Login failed!");
-                    }
+    private void setListeners() {
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(SignInActivity.this, SplashActivity.class));
+            }
+        });
+
+        passwordToggleButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (passwordEditText.getTransformationMethod().equals(HideReturnsTransformationMethod.getInstance())) {
+                    passwordEditText.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                    passwordToggleButton.setImageResource(R.drawable.ic_password_hide);
+                } else {
+                    passwordEditText.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                    passwordToggleButton.setImageResource(R.drawable.ic_password_show);
                 }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    // Sever error
-                    Log.i(TAG, error.toString());
-                }
-            }) {
-                @Nullable
-                @Override
-                protected Map<String, String> getParams() throws AuthFailureError {
-                    // Push data (email & passowrd) to body-parser sever
-                    HashMap<String, String> params = new HashMap<>();
-                    params.put("email", email);
-                    params.put("password", password);
-                    return params;
-                }
-            };
-            requestQueue.add(stringRequest);
+            }
+        });
+
+        signUpTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(SignInActivity.this, SignUpActivity.class));
+            }
+        });
+
+        loginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                validateDataInput();
+            }
+        });
+    }
+
+
+    private void validateDataInput() {
+        String emailInput = emailEditText.getText().toString().trim();
+        String passwordInput = passwordEditText.getText().toString().trim();
+        if (isEmptyFields(emailInput, passwordInput)) {
+            Toast.makeText(this, EMPTY_INPUT_MESSAGE, Toast.LENGTH_SHORT).show();
+            Log.e(TAG, EMPTY_INPUT_MESSAGE);
+            return;
         }
+        processLogin(emailInput, passwordInput);
+    }
+
+    private boolean isEmptyFields(String emailInput, String passwordInput) {
+        return emailInput.isEmpty() || passwordInput.isEmpty();
+    }
+
+    private void processLogin(String userEmail, String userPassword) {
+        RequestQueue requestQueue = Volley.newRequestQueue(SignInActivity.this);
+        StringRequest loginRequest = new StringRequest(Request.Method.POST, SEVER_URL_LOGIN, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                // Get response from sever
+                if (response.equals(RESPONSE_SUCCESS)) {
+                    Intent intent = new Intent(SignInActivity.this, MainActivity.class);
+                    intent.putExtra(EXTRA_USER_EMAIL, userEmail);
+                    startActivity(intent);
+                    Toast.makeText(SignInActivity.this, LOGIN_SUCCESS_MESSAGE, Toast.LENGTH_SHORT).show();
+                    Log.i(TAG, LOGIN_SUCCESS_MESSAGE);
+                } else {
+                    Toast.makeText(SignInActivity.this, LOGIN_FAILED_MESSAGE, Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, LOGIN_FAILED_MESSAGE);
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "Sever error: " + error.toString());
+            }
+        }) {
+            @Nullable
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                // Add email and password in the request body to sever
+                HashMap<String, String> params = new HashMap<>();
+                params.put(PARAM_EMAIL, userEmail);
+                params.put(PARAM_PASSWORD, userPassword);
+                return params;
+            }
+        };
+        requestQueue.add(loginRequest);
     }
 }
