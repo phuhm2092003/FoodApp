@@ -37,8 +37,11 @@ import fpt.edu.foodlyapplication.utils.Sever;
 import fpt.edu.foodlyapplication.view.SignInActivity;
 
 public class ProfileFragment extends Fragment {
-    public static final String KEY_USER = "EmailUser";
+    public static final String EXTRA_USER_EMAIL = "EmailUser";
     private static final String TAG = "ProfileFragment";
+    public static final String SEVER_URL_GET_USER = Sever.url_get_user_by_email;
+    public static final String RESPONSE_USER_NOT_EXISTS = "User Not Exists";
+    public static final String PARAM_EMAIL = "email";
     private TextView tvFullname, tvEmail;
     private MainActivity mainActivity;
     private ConstraintLayout itemAccoutInfo, itemChangePassword, itemLogout;
@@ -49,15 +52,29 @@ public class ProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
-        initView(view);
         mainActivity = (MainActivity) getActivity();
-        setText();
+        initView(view);
+        setListeners();
+        setUserDetails();
 
+        return view;
+    }
+
+
+    private void initView(View view) {
+        tvFullname = (TextView) view.findViewById(R.id.tvFullName);
+        tvEmail = (TextView) view.findViewById(R.id.tvEmail);
+        itemAccoutInfo = (ConstraintLayout) view.findViewById(R.id.itemAccoutInfo);
+        itemChangePassword = (ConstraintLayout) view.findViewById(R.id.itemChangePassword);
+        itemLogout = (ConstraintLayout) view.findViewById(R.id.itemLogout);
+    }
+
+    private void setListeners() {
         itemAccoutInfo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity().getApplicationContext(), UpdateInfoAccountActivity.class);
-                intent.putExtra(KEY_USER, mainActivity.getKeyUser());
+                intent.putExtra(EXTRA_USER_EMAIL, mainActivity.getKeyUser());
                 startActivity(intent);
             }
         });
@@ -66,7 +83,7 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity().getApplicationContext(), ChangePasswordActivity.class);
-                intent.putExtra(KEY_USER, mainActivity.getKeyUser());
+                intent.putExtra(EXTRA_USER_EMAIL, mainActivity.getKeyUser());
                 startActivity(intent);
             }
         });
@@ -77,30 +94,20 @@ public class ProfileFragment extends Fragment {
                 startActivity(new Intent(getActivity().getApplicationContext(), SignInActivity.class));
             }
         });
-        return view;
     }
 
-    private void initView(View view) {
-        tvFullname = (TextView) view.findViewById(R.id.tvFullName);
-        tvEmail = (TextView) view.findViewById(R.id.tvEmail);
-        itemAccoutInfo = (ConstraintLayout) view.findViewById(R.id.itemAccoutInfo);
-        itemChangePassword = (ConstraintLayout) view.findViewById(R.id.itemChangePassword);
-        itemLogout = (ConstraintLayout) view.findViewById(R.id.itemLogout);
-    }
-
-    private void setText() {
+    private void setUserDetails() {
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, Sever.url_get_user_by_email, new Response.Listener<String>() {
+        StringRequest getUserRequest = new StringRequest(Request.Method.POST, SEVER_URL_GET_USER, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                // Get string result from sever
-                if (response.equals("User Not Exists")) {
-                    Log.i(TAG, "User Not Exists");
+                // Get response from sever
+                if (response.equals(RESPONSE_USER_NOT_EXISTS)) {
+                    Log.i(TAG, RESPONSE_USER_NOT_EXISTS);
                 } else {
                     try {
                         JSONArray jsonArray = new JSONArray(response);
                         JSONObject jsonObject = jsonArray.getJSONObject(0);
-                        // Get object by email
                         User user = new User();
                         user.setEmail(jsonObject.getString("Email"));
                         user.setFullname(jsonObject.getString("FullName"));
@@ -111,7 +118,7 @@ public class ProfileFragment extends Fragment {
                         tvFullname.setText(user.getFullname());
 
                     } catch (JSONException e) {
-                        Log.i(TAG, e.toString());
+                        Log.e(TAG, e.toString());
                         throw new RuntimeException(e);
                     }
 
@@ -120,27 +127,25 @@ public class ProfileFragment extends Fragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                // Sever error
-                Log.i(TAG, error.toString());
+                Log.i(TAG, "Sever error:  " + error.toString());
             }
         }) {
             @Nullable
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
-                // Push data (email) to body-parser sever
+                // Add email to request body in sever
                 HashMap<String, String> params = new HashMap<>();
-                params.put("email", mainActivity.getKeyUser());
-
+                params.put(PARAM_EMAIL, mainActivity.getKeyUser());
                 return params;
             }
         };
-        requestQueue.add(stringRequest);
+        requestQueue.add(getUserRequest);
     }
 
 
     @Override
     public void onResume() {
-        setText();
+        setUserDetails();
         super.onResume();
     }
 }

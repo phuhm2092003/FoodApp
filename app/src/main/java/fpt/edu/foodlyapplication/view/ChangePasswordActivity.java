@@ -174,7 +174,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 HashMap<String, String> params = new HashMap<>();
-                params.put("email", getIntent().getStringExtra(ProfileFragment.KEY_USER));
+                params.put("email", getIntent().getStringExtra(ProfileFragment.EXTRA_USER_EMAIL));
                 return params;
             }
         };

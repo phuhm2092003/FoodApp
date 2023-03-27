@@ -66,7 +66,7 @@ public class UpdateInfoAccountActivity extends AppCompatActivity {
     }
 
     private void updateFullname() {
-        String emailUser = getIntent().getStringExtra(ProfileFragment.KEY_USER);
+        String emailUser = getIntent().getStringExtra(ProfileFragment.EXTRA_USER_EMAIL);
         String fullname = fullnameEdt.getText().toString().trim();
         if(fullname.isEmpty()){
             Toast.makeText(getApplicationContext(), "Fullname is empty!", Toast.LENGTH_SHORT).show();
@@ -81,7 +81,7 @@ public class UpdateInfoAccountActivity extends AppCompatActivity {
                         Log.i(TAG, "User Not Exists!");
                     }else if(response.equals("Successful")){
                         Toast.makeText(getApplicationContext(), "Update fullname successful!", Toast.LENGTH_SHORT).show();
-                        Log.i(TAG, "Update full name successful!");
+                        Log.i(TAG, "Update fullname successful!");
                     }else {
                         Log.i(TAG, "Erorr");
                     }
@@ -108,7 +108,7 @@ public class UpdateInfoAccountActivity extends AppCompatActivity {
     }
 
     private void setText() {
-        String emailUser = getIntent().getStringExtra(ProfileFragment.KEY_USER);
+        String emailUser = getIntent().getStringExtra(ProfileFragment.EXTRA_USER_EMAIL);
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
         StringRequest stringRequest = new StringRequest(Request.Method.POST, Sever.url_get_user_by_email, new Response.Listener<String>() {
             @Override
