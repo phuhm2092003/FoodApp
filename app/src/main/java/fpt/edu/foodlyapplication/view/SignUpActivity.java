@@ -147,7 +147,7 @@ public class SignUpActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 // Sever error
-                Log.e(TAG, error.toString());
+                Log.e(TAG, "Sever error: " + error.toString());
             }
         }) {
             @Nullable

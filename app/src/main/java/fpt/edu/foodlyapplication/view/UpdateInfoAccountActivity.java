@@ -34,88 +34,114 @@ import fpt.edu.foodlyapplication.utils.Sever;
 
 public class UpdateInfoAccountActivity extends AppCompatActivity {
     private static final String TAG = "UpdateInfoAccountActivity";
-    private ImageView backBtn;
-    private EditText fullnameEdt;
-    private ConstraintLayout updateBtn, updateLaterBtn;
+    public static final String SEVER_URL_GET_USER = Sever.url_get_user_by_email;
+    public static final String SEVER_URL_UPDATE_FULLNAME = Sever.url_update_fullname_user;
+    public static final String PARAM_EMAIL = "email";
+    public static final String PARAM_FULLNAME = "fullname";
+    public static final String RESPONSE_USER_NOT_EXISTS = "User Not Exists";
+    public static final String RESPONSE_SUCCESS = "Successful";
+    public static final String EMPTY_INPUT_MESSAGE = "Fullname is empty!";
+    public static final String USER_NOT_EXISTS_MESSAGE = "User Not Exists!";
+    public static final String UPDATE_SUCCESS_MESSAGE = "Update fullname successful!";
+    public static final String UPDATE_FAILED_MESSAGE = "Erorr";
+    private ImageView backButton;
+    private EditText fullnameEditText;
+    private ConstraintLayout updateButton, updateLaterButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update_info_account);
         initView();
-        setText();
-        backBtn.setOnClickListener(new View.OnClickListener() {
+        setUserDetails();
+        setListeners();
+    }
+
+    private void initView() {
+        backButton = (ImageView) findViewById(R.id.backButton);
+        fullnameEditText = (EditText) findViewById(R.id.fullnameEditText);
+        updateButton = (ConstraintLayout) findViewById(R.id.updateButton);
+        updateLaterButton = (ConstraintLayout) findViewById(R.id.updateLaterButton);
+    }
+
+    private void setListeners() {
+        backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 onBackPressed();
             }
         });
 
-        updateLaterBtn.setOnClickListener(new View.OnClickListener() {
+        updateLaterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 onBackPressed();
             }
         });
 
-        updateBtn.setOnClickListener(new View.OnClickListener() {
+        updateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                updateFullname();
+                validateDataInput();
             }
         });
     }
 
-    private void updateFullname() {
+    private void validateDataInput() {
         String emailUser = getIntent().getStringExtra(ProfileFragment.EXTRA_USER_EMAIL);
-        String fullname = fullnameEdt.getText().toString().trim();
-        if(fullname.isEmpty()){
-            Toast.makeText(getApplicationContext(), "Fullname is empty!", Toast.LENGTH_SHORT).show();
-            Log.i(TAG, "Fullname is empty");
-        }else {
-            RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-            StringRequest stringRequest = new StringRequest(Request.Method.POST, Sever.url_update_fullname_user, new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-                    if(response.equals("User Not Exists")){
-                        Toast.makeText(getApplicationContext(), "User Not Exists!", Toast.LENGTH_SHORT).show();
-                        Log.i(TAG, "User Not Exists!");
-                    }else if(response.equals("Successful")){
-                        Toast.makeText(getApplicationContext(), "Update fullname successful!", Toast.LENGTH_SHORT).show();
-                        Log.i(TAG, "Update fullname successful!");
-                    }else {
-                        Log.i(TAG, "Erorr");
-                    }
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    //Sever error
-                    Log.i(TAG, error.toString());
-                }
-            }){
-                @Nullable
-                @Override
-                protected Map<String, String> getParams() throws AuthFailureError {
-                    // Push data(email,newName) to body-parser sever
-                    HashMap<String, String> params = new HashMap<>();
-                    params.put("email",emailUser);
-                    params.put("fullname", fullname);
-                    return params;
-                }
-            };
-            requestQueue.add(stringRequest);
+        String fullname = fullnameEditText.getText().toString().trim();
+        if (fullname.isEmpty()) {
+            Toast.makeText(getApplicationContext(), EMPTY_INPUT_MESSAGE, Toast.LENGTH_SHORT).show();
+            Log.i(TAG, EMPTY_INPUT_MESSAGE);
+            return;
         }
+        updateFullName(emailUser, fullname);
     }
 
-    private void setText() {
-        String emailUser = getIntent().getStringExtra(ProfileFragment.EXTRA_USER_EMAIL);
+    private void updateFullName(String emailUser, String fullname) {
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, Sever.url_get_user_by_email, new Response.Listener<String>() {
+        StringRequest updateRequest = new StringRequest(Request.Method.POST, SEVER_URL_UPDATE_FULLNAME, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                // Get string result from sever
-                if (response.equals("User Not Exists")) {
-                    Log.i(TAG, "User Not Exists");
+                if (response.equals(RESPONSE_USER_NOT_EXISTS)) {
+                    Toast.makeText(getApplicationContext(), USER_NOT_EXISTS_MESSAGE, Toast.LENGTH_SHORT).show();
+                    Log.i(TAG, USER_NOT_EXISTS_MESSAGE);
+                } else if (response.equals(RESPONSE_SUCCESS)) {
+                    Toast.makeText(getApplicationContext(), UPDATE_SUCCESS_MESSAGE, Toast.LENGTH_SHORT).show();
+                    Log.i(TAG, UPDATE_SUCCESS_MESSAGE);
+                } else {
+                    Log.i(TAG, UPDATE_FAILED_MESSAGE);
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                //Sever error
+                Log.e(TAG, "Sever error: " + error.toString());
+            }
+        }) {
+            @Nullable
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                HashMap<String, String> params = new HashMap<>();
+                params.put(PARAM_EMAIL, emailUser);
+                params.put(PARAM_FULLNAME, fullname);
+                return params;
+            }
+        };
+
+        requestQueue.add(updateRequest);
+    }
+
+    private void setUserDetails() {
+        String emailUser = getIntent().getStringExtra(ProfileFragment.EXTRA_USER_EMAIL);
+        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+        StringRequest getUserRequest = new StringRequest(Request.Method.POST, SEVER_URL_GET_USER, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                // Get response from sever
+                if (response.equals(RESPONSE_USER_NOT_EXISTS)) {
+                    Log.i(TAG, RESPONSE_USER_NOT_EXISTS);
                 } else {
                     try {
                         JSONArray jsonArray = new JSONArray(response);
@@ -125,11 +151,10 @@ public class UpdateInfoAccountActivity extends AppCompatActivity {
                         user.setFullname(jsonObject.getString("FullName"));
                         user.setPassword(jsonObject.getString("Password"));
                         Log.i(TAG, user.toString());
-                        // Set text
-                        fullnameEdt.setText(user.getFullname());
+                        fullnameEditText.setText(user.getFullname());
 
                     } catch (JSONException e) {
-                        Log.i(TAG, e.toString());
+                        Log.e(TAG, "Sever error: " + e.toString());
                         throw new RuntimeException(e);
                     }
 
@@ -138,24 +163,17 @@ public class UpdateInfoAccountActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.i(TAG, error.toString());
+                Log.e(TAG, "Sever error: " + error.toString());
             }
         }) {
             @Nullable
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 HashMap<String, String> params = new HashMap<>();
-                params.put("email", emailUser);
+                params.put(PARAM_EMAIL, emailUser);
                 return params;
             }
         };
-        requestQueue.add(stringRequest);
-    }
-
-    private void initView() {
-        backBtn = (ImageView) findViewById(R.id.backBtn);
-        fullnameEdt = (EditText) findViewById(R.id.fullnameEdt);
-        updateBtn = (ConstraintLayout) findViewById(R.id.updateBtn);
-        updateLaterBtn = (ConstraintLayout) findViewById(R.id.updateLaterBtn);
+        requestQueue.add(getUserRequest);
     }
 }

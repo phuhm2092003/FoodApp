@@ -35,6 +35,15 @@ import fpt.edu.foodlyapplication.utils.Sever;
 
 public class ChangePasswordActivity extends AppCompatActivity {
     private static final String TAG = "ChangePasswordActivity";
+    public static final String RESPONSE_USER_NOT_EXISTS = "User Not Exists";
+    public static final String PARAM_EMAIL = "email";
+    public static final String PARAM_PASSWORD = "password";
+    public static final String SEVER_URL_GET_USER = Sever.url_get_user_by_email;
+    public static final String EMPTY_INPUT_MESSAGE = "Please enter full information!";
+    public static final String OLD_PASSWORD_WRONG_MESSAGE = "Old password is wrong!";
+    public static final String REPLACE_PASSWORD_WRONG_MESSAGE = "Replace new password is wrong!";
+    public static final String RESPONSE_SUCCESS = "Successful";
+    public static final String UPDATE_SUCCESS_MESSAGE = "Change password successful";
     private ImageView backBtn, passwordOldToggle, passwordNewToggle, passwordNewReplaceToggle;
     private EditText passwordOldEdt, passwordNewEdt, passwordNewReplaceEdt;
     private ConstraintLayout updateBtn, updateLaterBtn;
@@ -45,8 +54,11 @@ public class ChangePasswordActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_change_password);
         initView();
-        getUser();
-        // Event view
+        getInfoUser();
+        setListeners();
+    }
+
+    private void setListeners() {
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -85,35 +97,35 @@ public class ChangePasswordActivity extends AppCompatActivity {
         updateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.i(TAG, "Info user update passowd: "+ user.toString());
+                Log.i(TAG, "Info user update passowd: " + user.toString());
                 String passwordOld = passwordOldEdt.getText().toString().trim();
                 String passwordNew = passwordNewEdt.getText().toString().trim();
                 String passwordNewReplace = passwordNewReplaceEdt.getText().toString().trim();
-                if(passwordOld.isEmpty() || passwordNew.isEmpty() || passwordNewReplace.isEmpty()){
-                    Toast.makeText(getApplicationContext(), "Please enter full information!", Toast.LENGTH_SHORT).show();
-                    Log.i(TAG, "Data is empty!");
-                }else if(!passwordOld.equals(user.getPassword())){
-                    Toast.makeText(getApplicationContext(), "Old password is wrong!", Toast.LENGTH_SHORT).show();
-                    Log.i(TAG, "Old password is wrong!");
-                }else if(!passwordNew.equals(passwordNewReplace)){
-                    Toast.makeText(getApplicationContext(), "Replace new password is wrong!", Toast.LENGTH_SHORT).show();
-                    Log.i(TAG, "Replace new password is wrong!");
-                }else {
+                if (passwordOld.isEmpty() || passwordNew.isEmpty() || passwordNewReplace.isEmpty()) {
+                    Toast.makeText(getApplicationContext(), EMPTY_INPUT_MESSAGE, Toast.LENGTH_SHORT).show();
+                    Log.i(TAG, EMPTY_INPUT_MESSAGE);
+                } else if (!passwordOld.equals(user.getPassword())) {
+                    Toast.makeText(getApplicationContext(), OLD_PASSWORD_WRONG_MESSAGE, Toast.LENGTH_SHORT).show();
+                    Log.i(TAG, OLD_PASSWORD_WRONG_MESSAGE);
+                } else if (!passwordNew.equals(passwordNewReplace)) {
+                    Toast.makeText(getApplicationContext(), REPLACE_PASSWORD_WRONG_MESSAGE, Toast.LENGTH_SHORT).show();
+                    Log.i(TAG, REPLACE_PASSWORD_WRONG_MESSAGE);
+                } else {
                     RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
                     StringRequest stringRequest = new StringRequest(Request.Method.POST, Sever.url_update_password, new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
-                            if(response.equals("User Not Exists")){
-                                Log.i(TAG, "User Not Exists");
-                            }else if(response.equals("Successful")){
-                                Toast.makeText(getApplicationContext(), "Change password successful", Toast.LENGTH_SHORT).show();
-                                Log.i(TAG, "Change passowrd successful");
-                                getUser();
+                            if (response.equals(RESPONSE_USER_NOT_EXISTS)) {
+                                Log.i(TAG, RESPONSE_USER_NOT_EXISTS);
+                            } else if (response.equals(RESPONSE_SUCCESS)) {
+                                Toast.makeText(getApplicationContext(), UPDATE_SUCCESS_MESSAGE, Toast.LENGTH_SHORT).show();
+                                Log.i(TAG, UPDATE_SUCCESS_MESSAGE);
+                                getInfoUser();
                                 // Clearn text
                                 passwordOldEdt.setText("");
                                 passwordNewEdt.setText("");
                                 passwordNewReplaceEdt.setText("");
-                            }else {
+                            } else {
                                 Log.i(TAG, "Error");
                             }
                         }
@@ -122,13 +134,13 @@ public class ChangePasswordActivity extends AppCompatActivity {
                         public void onErrorResponse(VolleyError error) {
                             Log.i(TAG, error.toString());
                         }
-                    }){
+                    }) {
                         @Nullable
                         @Override
                         protected Map<String, String> getParams() throws AuthFailureError {
                             HashMap<String, String> params = new HashMap<>();
-                            params.put("email", user.getEmail());
-                            params.put("password", passwordNew);
+                            params.put(PARAM_EMAIL, user.getEmail());
+                            params.put(PARAM_PASSWORD, passwordNew);
                             return params;
                         }
                     };
@@ -139,14 +151,14 @@ public class ChangePasswordActivity extends AppCompatActivity {
         });
     }
 
-    private void getUser() {
+    private void getInfoUser() {
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, Sever.url_get_user_by_email, new Response.Listener<String>() {
+        StringRequest getUserRequest = new StringRequest(Request.Method.POST, SEVER_URL_GET_USER, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 // Get string result from sever
-                if (response.equals("User Not Exists")) {
-                    Log.i(TAG, "User Not Exists");
+                if (response.equals(RESPONSE_USER_NOT_EXISTS)) {
+                    Log.i(TAG, RESPONSE_USER_NOT_EXISTS);
                 } else {
                     try {
                         JSONArray jsonArray = new JSONArray(response);
@@ -169,16 +181,16 @@ public class ChangePasswordActivity extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
 
             }
-        }){
+        }) {
             @Nullable
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 HashMap<String, String> params = new HashMap<>();
-                params.put("email", getIntent().getStringExtra(ProfileFragment.EXTRA_USER_EMAIL));
+                params.put(PARAM_EMAIL, getIntent().getStringExtra(ProfileFragment.EXTRA_USER_EMAIL));
                 return params;
             }
         };
-        requestQueue.add(stringRequest);
+        requestQueue.add(getUserRequest);
     }
 
     private void togglePassword(EditText edt, ImageView imgToggle) {
