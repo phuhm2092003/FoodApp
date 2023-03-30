@@ -19,7 +19,8 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:paddingBottom="100dp">
 
             <TextView
                 android:id="@+id/titleWelcomeTo"
@@ -64,7 +65,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="35dp"
                 android:layout_marginTop="48dp"
-                android:layout_marginEnd="35dp"
+                android:layout_marginEnd="13dp"
                 android:background="@drawable/shape_radius15_white"
                 android:drawableStart="@drawable/ic_search"
                 android:drawablePadding="16dp"
@@ -74,13 +75,23 @@
                 android:inputType="textPersonName"
                 android:letterSpacing="0.02"
                 android:paddingHorizontal="23dp"
-                android:textColor="@color/MainBlack"
                 android:paddingVertical="21dp"
+                android:textColor="@color/MainBlack"
                 android:textColorHint="@color/Gray2"
                 android:textSize="14sp"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/imageView2"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/name_app" />
+
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="35dp"
+                android:src="@drawable/search_btn"
+                app:layout_constraintBottom_toBottomOf="@+id/searchEditText"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/searchEditText" />
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardView"
@@ -168,13 +179,16 @@
                 app:layout_constraintTop_toBottomOf="@+id/cardView" />
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/listProduct"
+                android:id="@+id/ProductRecyclerView"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginTop="26dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView" />
+                app:layout_constraintTop_toBottomOf="@+id/textView">
+
+            </androidx.recyclerview.widget.RecyclerView>
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
