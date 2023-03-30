@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.content.Intent;
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
@@ -30,7 +29,7 @@ import java.util.Map;
 
 import fpt.edu.foodlyapplication.MainActivity;
 import fpt.edu.foodlyapplication.R;
-import fpt.edu.foodlyapplication.utils.Sever;
+import fpt.edu.foodlyapplication.utils.Server;
 
 public class SignInActivity extends AppCompatActivity {
     private static final String TAG = "SignInActivity";
@@ -41,7 +40,7 @@ public class SignInActivity extends AppCompatActivity {
     public static final String LOGIN_FAILED_MESSAGE = "Login failed!";
     public static final String LOGIN_SUCCESS_MESSAGE = "Login successful!";
     private static final String EMPTY_INPUT_MESSAGE = "Email or password is empty!";
-    public static final String SEVER_URL_LOGIN = Sever.url_login;
+    public static final String SERVER_URL_LOGIN = Server.url_login;
     private ImageView backButton, passwordToggleButton;
     private EditText emailEditText, passwordEditText;
     private ConstraintLayout loginButton;
@@ -120,7 +119,7 @@ public class SignInActivity extends AppCompatActivity {
 
     private void processLogin(String userEmail, String userPassword) {
         RequestQueue requestQueue = Volley.newRequestQueue(SignInActivity.this);
-        StringRequest loginRequest = new StringRequest(Request.Method.POST, SEVER_URL_LOGIN, new Response.Listener<String>() {
+        StringRequest loginRequest = new StringRequest(Request.Method.POST, SERVER_URL_LOGIN, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 // Get response from sever

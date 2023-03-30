@@ -23,19 +23,18 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
 import fpt.edu.foodlyapplication.R;
 import fpt.edu.foodlyapplication.fragment.ProfileFragment;
 import fpt.edu.foodlyapplication.model.User;
-import fpt.edu.foodlyapplication.utils.Sever;
+import fpt.edu.foodlyapplication.utils.Server;
 
 public class UpdateInfoAccountActivity extends AppCompatActivity {
     private static final String TAG = "UpdateInfoAccountActivity";
-    public static final String SEVER_URL_GET_USER = Sever.url_get_user_by_email;
-    public static final String SEVER_URL_UPDATE_FULLNAME = Sever.url_update_fullname_user;
+    public static final String SEVER_URL_GET_USER = Server.url_get_user_by_email;
+    public static final String SERVER_URL_UPDATE_FULLNAME = Server.url_update_fullname_user;
     public static final String PARAM_EMAIL = "email";
     public static final String PARAM_FULLNAME = "fullname";
     public static final String RESPONSE_USER_NOT_EXISTS = "User Not Exists";
@@ -100,7 +99,7 @@ public class UpdateInfoAccountActivity extends AppCompatActivity {
 
     private void updateFullName(String emailUser, String fullname) {
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-        StringRequest updateRequest = new StringRequest(Request.Method.POST, SEVER_URL_UPDATE_FULLNAME, new Response.Listener<String>() {
+        StringRequest updateRequest = new StringRequest(Request.Method.POST, SERVER_URL_UPDATE_FULLNAME, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 if (response.equals(RESPONSE_USER_NOT_EXISTS)) {

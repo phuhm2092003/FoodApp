@@ -27,7 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import fpt.edu.foodlyapplication.R;
-import fpt.edu.foodlyapplication.utils.Sever;
+import fpt.edu.foodlyapplication.utils.Server;
 
 public class SignUpActivity extends AppCompatActivity {
     private static final String TAG = "SignUpActivity";
@@ -44,7 +44,7 @@ public class SignUpActivity extends AppCompatActivity {
     public static final String PARAM_EMAIL = "email";
     public static final String PARAM_FULLNAME = "fullname";
     public static final String PARAM_PASSWORD = "password";
-    public static final String SEVER_URL_REGISTER_ACCOUNT = Sever.url_register_account;
+    public static final String SERVER_URL_REGISTER_ACCOUNT = Server.url_register_account;
 
     private ImageView backButton, passwordToggleButton;
     private EditText fullnameEditText, emailEditText, passwordEditText;
@@ -126,7 +126,7 @@ public class SignUpActivity extends AppCompatActivity {
 
     private void registerAccounts(String fullname, String email, String password) {
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-        StringRequest registerRequest = new StringRequest(Request.Method.POST, SEVER_URL_REGISTER_ACCOUNT, new Response.Listener<String>() {
+        StringRequest registerRequest = new StringRequest(Request.Method.POST, SERVER_URL_REGISTER_ACCOUNT, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 // Get response from sever

@@ -27,14 +27,14 @@ import java.util.ArrayList;
 import fpt.edu.foodlyapplication.R;
 import fpt.edu.foodlyapplication.adapter.ProductAdapter;
 import fpt.edu.foodlyapplication.model.Product;
-import fpt.edu.foodlyapplication.utils.Sever;
+import fpt.edu.foodlyapplication.utils.Server;
 
 public class HomeFragment extends Fragment {
     private static final String TAG = "HomeFragment";
     private static final String RESPONSE_NO_DATA = "No data";
     private static final String RESPONSE_ERROR = "ERROR";
-    private static final String SEVER_URL_GET_LIST_PRODUCT = Sever.url_get_list_product;
-    private RecyclerView ProductRecyclerView;
+    private static final String SERVER_URL_GET_LIST_PRODUCT = Server.url_get_list_product;
+    private RecyclerView productReycleView;
     private ProductAdapter productAdapter;
     private LinearLayoutManager layoutManagerProduct;
     private ArrayList<Product> productList;
@@ -52,11 +52,11 @@ public class HomeFragment extends Fragment {
     }
 
     private void initView(View view) {
-        ProductRecyclerView = (RecyclerView) view.findViewById(R.id.ProductRecyclerView);
+        productReycleView = (RecyclerView) view.findViewById(R.id.productReycleView);
     }
     private void getListProduct() {
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
-        StringRequest getListProductRequest = new StringRequest(Request.Method.POST, SEVER_URL_GET_LIST_PRODUCT, new Response.Listener<String>() {
+        StringRequest getListProductRequest = new StringRequest(Request.Method.POST, SERVER_URL_GET_LIST_PRODUCT, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 if(!response.equals(RESPONSE_NO_DATA) && !response.equals(RESPONSE_ERROR)){
@@ -75,9 +75,9 @@ public class HomeFragment extends Fragment {
                         }
 
                         layoutManagerProduct = new LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL, false);
-                        ProductRecyclerView.setLayoutManager(layoutManagerProduct);
+                        productReycleView.setLayoutManager(layoutManagerProduct);
                         productAdapter = new ProductAdapter(productList);
-                        ProductRecyclerView.setAdapter(productAdapter);
+                        productReycleView.setAdapter(productAdapter);
 
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
