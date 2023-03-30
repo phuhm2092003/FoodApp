@@ -74,7 +74,7 @@ public class CartFragment extends Fragment {
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(getActivity().getApplicationContext(), MainActivity.class));
+                requireActivity().onBackPressed();
             }
         });
 

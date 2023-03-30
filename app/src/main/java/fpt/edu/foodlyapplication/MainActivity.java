@@ -118,4 +118,22 @@ public class MainActivity extends AppCompatActivity {
         profileText = (TextView) findViewById(R.id.profileText);
         pageMain = (ViewPager2) findViewById(R.id.pageMain);
     }
+
+    @Override
+    public void onBackPressed() {
+        Log.i(TAG, "onBackPressed: ");
+        homeItem.setBackgroundResource(R.drawable.bgr_item_bottom_menu);
+        cartItem.setBackgroundResource(R.color.White);
+        profileItem.setBackgroundResource(R.color.White);
+
+        homeImg.setImageResource(R.drawable.ic_home_main_color);
+        cartImg.setImageResource(R.drawable.ic_cart_gray);
+        profileImg.setImageResource(R.drawable.ic_profile_gray);
+
+        homeText.setVisibility(View.VISIBLE);
+        cartText.setVisibility(View.GONE);
+        profileText.setVisibility(View.GONE);
+
+        pageMain.setCurrentItem(0, false);
+    }
 }
