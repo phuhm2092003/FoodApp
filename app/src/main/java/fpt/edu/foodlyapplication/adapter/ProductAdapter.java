@@ -15,14 +15,17 @@ import com.bumptech.glide.Glide;
 import java.util.ArrayList;
 
 import fpt.edu.foodlyapplication.R;
+import fpt.edu.foodlyapplication.interfaces.IItemAddCartCallBack;
 import fpt.edu.foodlyapplication.model.Product;
 import fpt.edu.foodlyapplication.utils.Server;
 
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductViewHolder> {
     private ArrayList<Product> list;
+    private IItemAddCartCallBack iItemAddCartCallBack;
 
-    public ProductAdapter(ArrayList<Product> list) {
+    public ProductAdapter(ArrayList<Product> list, IItemAddCartCallBack iItemAddCartCallBack) {
         this.list = list;
+        this.iItemAddCartCallBack = iItemAddCartCallBack;
     }
 
     @NonNull
@@ -53,6 +56,12 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         holder.productName.setText(product.getName());
         holder.productID.setText("PRO0" + product.getId());
         holder.productPrice.setText("$" + product.getPrice() + ".");
+        holder.addToCartButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                iItemAddCartCallBack.onCallBack(product);
+            }
+        });
     }
 
     @Override

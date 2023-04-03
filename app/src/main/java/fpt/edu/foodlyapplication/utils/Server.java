@@ -9,5 +9,6 @@ public class Server {
     public static final String url_update_password = http + "/updatePassword";
     public static final String url_get_list_product = http + "/listProduct";
     public static final String url_get_list_cart = http + "/listCart";
+    public static final String url_add_cart = http + "/addCart";
 
 }
