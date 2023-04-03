@@ -18,7 +18,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import fpt.edu.foodlyapplication.R;
 import fpt.edu.foodlyapplication.interfaces.IItemCartDeleteCallBack;
 import fpt.edu.foodlyapplication.model.Cart;
-import fpt.edu.foodlyapplication.utils.Server;
+import fpt.edu.foodlyapplication.utils.ServerURLManger;
 
 public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder> {
     private ArrayList<Cart> listCart;
@@ -49,7 +49,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                     .into(holder.productImg);
         } else {
             Glide.with(holder.itemView.getContext())
-                    .load(Server.http + "/" + cart.getImage())
+                    .load(ServerURLManger.http + "/" + cart.getImage())
                     .placeholder(R.drawable.load_image)
                     .into(holder.productImg);
         }

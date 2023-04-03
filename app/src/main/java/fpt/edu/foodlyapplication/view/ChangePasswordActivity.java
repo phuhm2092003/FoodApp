@@ -31,14 +31,14 @@ import java.util.Map;
 import fpt.edu.foodlyapplication.R;
 import fpt.edu.foodlyapplication.fragment.ProfileFragment;
 import fpt.edu.foodlyapplication.model.User;
-import fpt.edu.foodlyapplication.utils.Server;
+import fpt.edu.foodlyapplication.utils.ServerURLManger;
 
 public class ChangePasswordActivity extends AppCompatActivity {
     private static final String TAG = "ChangePasswordActivity";
     public static final String RESPONSE_USER_NOT_EXISTS = "User Not Exists";
     public static final String PARAM_EMAIL = "email";
     public static final String PARAM_PASSWORD = "password";
-    public static final String SERVER_URL_GET_USER = Server.url_get_user_by_email;
+    public static final String SERVER_URL_GET_USER = ServerURLManger.url_get_user_by_email;
     public static final String EMPTY_INPUT_MESSAGE = "Please enter full information!";
     public static final String OLD_PASSWORD_WRONG_MESSAGE = "Old password is wrong!";
     public static final String REPLACE_PASSWORD_WRONG_MESSAGE = "Replace new password is wrong!";
@@ -112,7 +112,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
                     Log.i(TAG, REPLACE_PASSWORD_WRONG_MESSAGE);
                 } else {
                     RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-                    StringRequest stringRequest = new StringRequest(Request.Method.POST, Server.url_update_password, new Response.Listener<String>() {
+                    StringRequest stringRequest = new StringRequest(Request.Method.POST, ServerURLManger.url_update_password, new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
                             if (response.equals(RESPONSE_USER_NOT_EXISTS)) {

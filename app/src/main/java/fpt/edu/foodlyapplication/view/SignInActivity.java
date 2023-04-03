@@ -30,7 +30,7 @@ import java.util.Map;
 
 import fpt.edu.foodlyapplication.MainActivity;
 import fpt.edu.foodlyapplication.R;
-import fpt.edu.foodlyapplication.utils.Server;
+import fpt.edu.foodlyapplication.utils.ServerURLManger;
 
 public class SignInActivity extends AppCompatActivity {
     private static final String TAG = "SignInActivity";
@@ -41,7 +41,7 @@ public class SignInActivity extends AppCompatActivity {
     public static final String LOGIN_FAILED_MESSAGE = "Login failed!";
     public static final String LOGIN_SUCCESS_MESSAGE = "Login successful!";
     private static final String EMPTY_INPUT_MESSAGE = "Email or password is empty!";
-    public static final String SERVER_URL_LOGIN = Server.url_login;
+    public static final String SERVER_URL_LOGIN = ServerURLManger.url_login;
     private ImageView backButton, passwordToggleButton;
     private EditText emailEditText, passwordEditText;
     private ConstraintLayout loginButton;
@@ -97,13 +97,13 @@ public class SignInActivity extends AppCompatActivity {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                validateDataInput();
+                validateLoginForm();
             }
         });
     }
 
 
-    private void validateDataInput() {
+    private void validateLoginForm() {
         String emailInput = emailEditText.getText().toString().trim();
         String passwordInput = passwordEditText.getText().toString().trim();
         if (TextUtils.isEmpty(emailInput) || TextUtils.isEmpty(passwordInput)) {

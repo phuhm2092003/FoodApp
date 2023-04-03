@@ -29,12 +29,12 @@ import java.util.Map;
 import fpt.edu.foodlyapplication.R;
 import fpt.edu.foodlyapplication.fragment.ProfileFragment;
 import fpt.edu.foodlyapplication.model.User;
-import fpt.edu.foodlyapplication.utils.Server;
+import fpt.edu.foodlyapplication.utils.ServerURLManger;
 
 public class UpdateInfoAccountActivity extends AppCompatActivity {
     private static final String TAG = "UpdateInfoAccountActivity";
-    public static final String SEVER_URL_GET_USER = Server.url_get_user_by_email;
-    public static final String SERVER_URL_UPDATE_FULLNAME = Server.url_update_fullname_user;
+    public static final String SEVER_URL_GET_USER = ServerURLManger.url_get_user_by_email;
+    public static final String SERVER_URL_UPDATE_FULLNAME = ServerURLManger.url_update_fullname_user;
     public static final String PARAM_EMAIL = "email";
     public static final String PARAM_FULLNAME = "fullname";
     public static final String RESPONSE_USER_NOT_EXISTS = "User Not Exists";

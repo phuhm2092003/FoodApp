@@ -34,13 +34,13 @@ import fpt.edu.foodlyapplication.R;
 import fpt.edu.foodlyapplication.adapter.ProductAdapter;
 import fpt.edu.foodlyapplication.interfaces.IItemAddCartCallBack;
 import fpt.edu.foodlyapplication.model.Product;
-import fpt.edu.foodlyapplication.utils.Server;
+import fpt.edu.foodlyapplication.utils.ServerURLManger;
 
 public class HomeFragment extends Fragment {
     private static final String TAG = "HomeFragment";
     private static final String RESPONSE_NO_DATA = "List product null";
     private static final String RESPONSE_ERROR = "Error";
-    private static final String SERVER_URL_GET_LIST_PRODUCT = Server.url_get_list_product;
+    private static final String SERVER_URL_GET_LIST_PRODUCT = ServerURLManger.url_get_list_product;
     public static final String RESPONSE_SUCCESS = "Successful";
     public static final String ADD_SUCCESS_MESSAGE = "Add Product successful";
     public static final String ADD_FAILED_MESSAGE = "Add Product failed";
@@ -48,7 +48,7 @@ public class HomeFragment extends Fragment {
     public static final String PARAM_ID_PRODUCT = "idProduct";
     public static final String PARAM_QUATITY = "quantity";
     public static final String QUANTITY_DEFAULT = "1";
-    public static final String SERVER_URL_ADD_CART = Server.url_add_cart;
+    public static final String SERVER_URL_ADD_CART = ServerURLManger.url_add_cart;
     private RecyclerView productReycleView;
     private ProductAdapter productAdapter;
     private LinearLayoutManager layoutManagerProduct;

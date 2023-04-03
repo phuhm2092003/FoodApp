@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import fpt.edu.foodlyapplication.R;
-import fpt.edu.foodlyapplication.utils.Server;
+import fpt.edu.foodlyapplication.utils.ServerURLManger;
 
 public class SignUpActivity extends AppCompatActivity {
     private static final String TAG = "SignUpActivity";
@@ -45,7 +45,7 @@ public class SignUpActivity extends AppCompatActivity {
     public static final String PARAM_EMAIL = "email";
     public static final String PARAM_FULLNAME = "fullname";
     public static final String PARAM_PASSWORD = "password";
-    public static final String SERVER_URL_REGISTER_ACCOUNT = Server.url_register_account;
+    public static final String SERVER_URL_REGISTER_ACCOUNT = ServerURLManger.url_register_account;
 
     private ImageView backButton, passwordToggleButton;
     private EditText fullnameEditText, emailEditText, passwordEditText;

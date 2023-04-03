@@ -1,9 +1,7 @@
 package fpt.edu.foodlyapplication.fragment;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -39,17 +37,17 @@ import fpt.edu.foodlyapplication.R;
 import fpt.edu.foodlyapplication.adapter.CartAdapter;
 import fpt.edu.foodlyapplication.interfaces.IItemCartDeleteCallBack;
 import fpt.edu.foodlyapplication.model.Cart;
-import fpt.edu.foodlyapplication.utils.Server;
+import fpt.edu.foodlyapplication.utils.ServerURLManger;
 
 public class CartFragment extends Fragment {
     public static final String RESPONSE_ERROR = "Error";
     public static final String RESPONSE_LIST_NULL = "List cart null";
     public static final String PARAM_EMAIL = "email";
-    public static final String SERVER_URL_GET_LIST_CART = Server.url_get_list_cart;
+    public static final String SERVER_URL_GET_LIST_CART = ServerURLManger.url_get_list_cart;
     public static final String RESPONSE_SUCCESS = "Successful";
     public static final String DELETE_CART_SUCCESS_MESSAGE = "Delete cart successful";
     public static final String DELETE_CART_FAILED_MESSAGE = "Delete cart failed";
-    public static final String SERVER_URL_DELETE_CART = Server.url_delete_cart;
+    public static final String SERVER_URL_DELETE_CART = ServerURLManger.url_delete_cart;
     public static final String PARAM_ID = "id";
     private ImageView backButton, loadListButton;
     private RecyclerView cartRecyclerView;

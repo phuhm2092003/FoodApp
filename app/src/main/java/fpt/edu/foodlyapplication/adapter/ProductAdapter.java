@@ -1,6 +1,5 @@
 package fpt.edu.foodlyapplication.adapter;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +16,7 @@ import java.util.ArrayList;
 import fpt.edu.foodlyapplication.R;
 import fpt.edu.foodlyapplication.interfaces.IItemAddCartCallBack;
 import fpt.edu.foodlyapplication.model.Product;
-import fpt.edu.foodlyapplication.utils.Server;
+import fpt.edu.foodlyapplication.utils.ServerURLManger;
 
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductViewHolder> {
     private ArrayList<Product> list;
@@ -48,7 +47,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
                     .into(holder.productImg);
         } else {
             Glide.with(holder.itemView.getContext())
-                    .load(Server.http + "/" + product.getImage())
+                    .load(ServerURLManger.http + "/" + product.getImage())
                     .placeholder(R.drawable.load_image)
                     .into(holder.productImg);
         }

@@ -33,13 +33,13 @@ import fpt.edu.foodlyapplication.MainActivity;
 import fpt.edu.foodlyapplication.R;
 import fpt.edu.foodlyapplication.view.UpdateInfoAccountActivity;
 import fpt.edu.foodlyapplication.model.User;
-import fpt.edu.foodlyapplication.utils.Server;
+import fpt.edu.foodlyapplication.utils.ServerURLManger;
 import fpt.edu.foodlyapplication.view.SignInActivity;
 
 public class ProfileFragment extends Fragment {
     public static final String EXTRA_USER_EMAIL = "EmailUser";
     private static final String TAG = "ProfileFragment";
-    public static final String SERVER_URL_GET_USER = Server.url_get_user_by_email;
+    public static final String SERVER_URL_GET_USER = ServerURLManger.url_get_user_by_email;
     public static final String RESPONSE_USER_NOT_EXISTS = "User Not Exists";
     public static final String PARAM_EMAIL = "email";
     private TextView tvFullname, tvEmail;
