@@ -16,8 +16,9 @@ import java.util.ArrayList;
 
 import fpt.edu.foodlyapplication.R;
 import fpt.edu.foodlyapplication.model.Product;
+import fpt.edu.foodlyapplication.utils.Server;
 
-public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductViewHolder>{
+public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductViewHolder> {
     private ArrayList<Product> list;
 
     public ProductAdapter(ArrayList<Product> list) {
@@ -27,28 +28,36 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     @NonNull
     @Override
     public ProductViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_product, parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_product, parent, false);
         return new ProductViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ProductViewHolder holder, int position) {
         Product product = list.get(position);
-        if(product == null){
+        if (product == null) {
             return;
         }
-        Glide.with(holder.itemView.getContext())
-                .load(product.getImage())
-                .placeholder(R.drawable.load_image)
-                .into(holder.productImg);
+        if (product.getImage().substring(0, 4).equals("http")) {
+            Glide.with(holder.itemView.getContext())
+                    .load(product.getImage())
+                    .placeholder(R.drawable.load_image)
+                    .into(holder.productImg);
+        } else {
+            Glide.with(holder.itemView.getContext())
+                    .load(Server.http + "/" + product.getImage())
+                    .placeholder(R.drawable.load_image)
+                    .into(holder.productImg);
+        }
+
         holder.productName.setText(product.getName());
         holder.productID.setText("PRO0" + product.getId());
-        holder.productPrice.setText("$"+product.getPrice()+".");
+        holder.productPrice.setText("$" + product.getPrice() + ".");
     }
 
     @Override
     public int getItemCount() {
-        if(list == null){
+        if (list == null) {
             return 0;
         }
         return list.size();
@@ -57,6 +66,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     public static class ProductViewHolder extends RecyclerView.ViewHolder {
         ImageView productImg, addToCartButton;
         TextView productName, productID, productPrice;
+
         public ProductViewHolder(@NonNull View itemView) {
             super(itemView);
 

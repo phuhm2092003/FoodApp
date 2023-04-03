@@ -6,6 +6,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
@@ -105,16 +106,12 @@ public class SignInActivity extends AppCompatActivity {
     private void validateDataInput() {
         String emailInput = emailEditText.getText().toString().trim();
         String passwordInput = passwordEditText.getText().toString().trim();
-        if (isEmptyFields(emailInput, passwordInput)) {
+        if (TextUtils.isEmpty(emailInput) || TextUtils.isEmpty(passwordInput)) {
             Toast.makeText(this, EMPTY_INPUT_MESSAGE, Toast.LENGTH_SHORT).show();
-            Log.e(TAG, EMPTY_INPUT_MESSAGE);
+            Log.d(TAG, EMPTY_INPUT_MESSAGE);
             return;
         }
         processLogin(emailInput, passwordInput);
-    }
-
-    private boolean isEmptyFields(String emailInput, String passwordInput) {
-        return emailInput.isEmpty() || passwordInput.isEmpty();
     }
 
     private void processLogin(String userEmail, String userPassword) {
@@ -128,10 +125,10 @@ public class SignInActivity extends AppCompatActivity {
                     intent.putExtra(EXTRA_USER_EMAIL, userEmail);
                     startActivity(intent);
                     Toast.makeText(SignInActivity.this, LOGIN_SUCCESS_MESSAGE, Toast.LENGTH_SHORT).show();
-                    Log.i(TAG, LOGIN_SUCCESS_MESSAGE);
+                    Log.d(TAG, LOGIN_SUCCESS_MESSAGE);
                 } else {
                     Toast.makeText(SignInActivity.this, LOGIN_FAILED_MESSAGE, Toast.LENGTH_SHORT).show();
-                    Log.e(TAG, LOGIN_FAILED_MESSAGE);
+                    Log.d(TAG, LOGIN_FAILED_MESSAGE);
                 }
             }
         }, new Response.ErrorListener() {

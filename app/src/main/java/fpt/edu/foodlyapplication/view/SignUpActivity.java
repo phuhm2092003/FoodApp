@@ -6,6 +6,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
@@ -110,15 +111,15 @@ public class SignUpActivity extends AppCompatActivity {
         String email = emailEditText.getText().toString().trim();
         String password = passwordEditText.getText().toString().trim();
 
-        if (isEmptyFields(fullname, email, password)) {
+        if (TextUtils.isEmpty(fullname) || TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
             Toast.makeText(getApplicationContext(), EMPTY_INPUT_MESSAGE, Toast.LENGTH_SHORT).show();
-            Log.e(TAG, EMPTY_INPUT_MESSAGE);
+            Log.d(TAG, EMPTY_INPUT_MESSAGE);
             return;
         }
 
         if (isInvalidEmail(email)) {
             Toast.makeText(getApplicationContext(), INVALID_EMAIL_MESSAGE, Toast.LENGTH_SHORT).show();
-            Log.e(TAG, INVALID_EMAIL_MESSAGE);
+            Log.d(TAG, INVALID_EMAIL_MESSAGE);
             return;
         }
         registerAccounts(fullname, email, password);
@@ -132,28 +133,26 @@ public class SignUpActivity extends AppCompatActivity {
                 // Get response from sever
                 if (response.equals(RESPONSE_USER_EXISTS)) {
                     Toast.makeText(getApplicationContext(), USER_EXISTS_MESSAGE, Toast.LENGTH_SHORT).show();
-                    Log.i(TAG, USER_EXISTS_MESSAGE);
+                    Log.d(TAG, USER_EXISTS_MESSAGE);
                 } else if (response.equals(RESPONSE_SUCCESS)) {
                     Toast.makeText(getApplicationContext(), REGISTER_SUCCESS_MESSAGE, Toast.LENGTH_SHORT).show();
-                    Log.i(TAG, REGISTER_SUCCESS_MESSAGE);
-                    // Clear text
+                    Log.d(TAG, REGISTER_SUCCESS_MESSAGE);
                     clearTextFields();
                 } else {
                     Toast.makeText(getApplicationContext(), REGISTER_FAILED_MESSAGE, Toast.LENGTH_SHORT).show();
-                    Log.i(TAG, REGISTER_FAILED_MESSAGE);
+                    Log.d(TAG, REGISTER_FAILED_MESSAGE);
                 }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                // Sever error
                 Log.e(TAG, "Sever error: " + error.toString());
             }
         }) {
             @Nullable
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
-                // Push data (email, fullname password) to body-parser sever
+                // Add email, password, name in the request body to server
                 HashMap<String, String> params = new HashMap<>();
                 params.put(PARAM_EMAIL, email);
                 params.put(PARAM_FULLNAME, fullname);
@@ -173,9 +172,4 @@ public class SignUpActivity extends AppCompatActivity {
     private boolean isInvalidEmail(String email) {
         return !email.matches(EMAIL_REGEX_PATTERN);
     }
-
-    private boolean isEmptyFields(String fullname, String email, String password) {
-        return fullname.isEmpty() || email.isEmpty() || password.isEmpty();
-    }
-
 }
