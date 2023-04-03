@@ -111,25 +111,15 @@ public class SignInActivity extends AppCompatActivity {
             Log.d(TAG, EMPTY_INPUT_MESSAGE);
             return;
         }
-        processLogin(emailInput, passwordInput);
+        processLoginRequest(emailInput, passwordInput);
     }
 
-    private void processLogin(String userEmail, String userPassword) {
+    private void processLoginRequest(String userEmail, String userPassword) {
         RequestQueue requestQueue = Volley.newRequestQueue(SignInActivity.this);
         StringRequest loginRequest = new StringRequest(Request.Method.POST, SERVER_URL_LOGIN, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                // Get response from sever
-                if (response.equals(RESPONSE_SUCCESS)) {
-                    Intent intent = new Intent(SignInActivity.this, MainActivity.class);
-                    intent.putExtra(EXTRA_USER_EMAIL, userEmail);
-                    startActivity(intent);
-                    Toast.makeText(SignInActivity.this, LOGIN_SUCCESS_MESSAGE, Toast.LENGTH_SHORT).show();
-                    Log.d(TAG, LOGIN_SUCCESS_MESSAGE);
-                } else {
-                    Toast.makeText(SignInActivity.this, LOGIN_FAILED_MESSAGE, Toast.LENGTH_SHORT).show();
-                    Log.d(TAG, LOGIN_FAILED_MESSAGE);
-                }
+                processLoginResponse(response, userEmail);
             }
         }, new Response.ErrorListener() {
             @Override
@@ -148,5 +138,19 @@ public class SignInActivity extends AppCompatActivity {
             }
         };
         requestQueue.add(loginRequest);
+    }
+
+    private void processLoginResponse(String response, String userEmail) {
+        // Get response from sever
+        if (response.equals(RESPONSE_SUCCESS)) {
+            Intent intent = new Intent(SignInActivity.this, MainActivity.class);
+            intent.putExtra(EXTRA_USER_EMAIL, userEmail);
+            startActivity(intent);
+            Toast.makeText(SignInActivity.this, LOGIN_SUCCESS_MESSAGE, Toast.LENGTH_SHORT).show();
+            Log.d(TAG, LOGIN_SUCCESS_MESSAGE);
+        } else {
+            Toast.makeText(SignInActivity.this, LOGIN_FAILED_MESSAGE, Toast.LENGTH_SHORT).show();
+            Log.d(TAG, LOGIN_FAILED_MESSAGE);
+        }
     }
 }
