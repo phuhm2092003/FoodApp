@@ -7,6 +7,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -15,14 +16,17 @@ import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import fpt.edu.foodlyapplication.R;
+import fpt.edu.foodlyapplication.interfaces.IItemCartDeleteCallBack;
 import fpt.edu.foodlyapplication.model.Cart;
 import fpt.edu.foodlyapplication.utils.Server;
 
 public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder> {
     private ArrayList<Cart> listCart;
+    private IItemCartDeleteCallBack iItemCartDeleteCallBack;
 
-    public CartAdapter(ArrayList<Cart> listCart) {
+    public CartAdapter(ArrayList<Cart> listCart, IItemCartDeleteCallBack iItemCartDeleteCallBack) {
         this.listCart = listCart;
+        this.iItemCartDeleteCallBack = iItemCartDeleteCallBack;
     }
 
     @NonNull
@@ -54,6 +58,13 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         holder.productPrice.setText("$" + cart.getPrice() + ".00");
         holder.productSumPrice.setText("$" + cart.getSumPrice() + ".00");
         holder.productQuantity.setText(String.format("%02d", cart.getQuantity()));
+        holder.itemCart.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                iItemCartDeleteCallBack.onCallBack(cart);
+                return true;
+            }
+        });
     }
 
     @Override
@@ -65,10 +76,11 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         CircleImageView productImg;
         TextView productName, productPrice, productSumPrice, productQuantity;
         ImageView reduceQuantityButton, addQuantityButton;
+        ConstraintLayout itemCart;
 
         public CartViewHolder(@NonNull View itemView) {
             super(itemView);
-
+            itemCart = (ConstraintLayout) itemView.findViewById(R.id.itemCart);
             productImg = (CircleImageView) itemView.findViewById(R.id.productImg);
             productName = (TextView) itemView.findViewById(R.id.productName);
             productPrice = (TextView) itemView.findViewById(R.id.productPrice);

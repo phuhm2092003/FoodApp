@@ -1,5 +1,8 @@
 package fpt.edu.foodlyapplication.fragment;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -34,6 +37,7 @@ import java.util.Map;
 import fpt.edu.foodlyapplication.MainActivity;
 import fpt.edu.foodlyapplication.R;
 import fpt.edu.foodlyapplication.adapter.CartAdapter;
+import fpt.edu.foodlyapplication.interfaces.IItemCartDeleteCallBack;
 import fpt.edu.foodlyapplication.model.Cart;
 import fpt.edu.foodlyapplication.utils.Server;
 
@@ -42,6 +46,11 @@ public class CartFragment extends Fragment {
     public static final String RESPONSE_LIST_NULL = "List cart null";
     public static final String PARAM_EMAIL = "email";
     public static final String SERVER_URL_GET_LIST_CART = Server.url_get_list_cart;
+    public static final String RESPONSE_SUCCESS = "Successful";
+    public static final String DELETE_CART_SUCCESS_MESSAGE = "Delete cart successful";
+    public static final String DELETE_CART_FAILED_MESSAGE = "Delete cart failed";
+    public static final String SERVER_URL_DELETE_CART = Server.url_delete_cart;
+    public static final String PARAM_ID = "id";
     private ImageView backButton, loadListButton;
     private RecyclerView cartRecyclerView;
     private CartAdapter cartAdapter;
@@ -101,12 +110,18 @@ public class CartFragment extends Fragment {
                     listCart.clear();
                     cartLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext(), RecyclerView.VERTICAL, false);
                     cartRecyclerView.setLayoutManager(cartLayoutManager);
-                    cartAdapter = new CartAdapter(listCart);
+                    cartAdapter = new CartAdapter(listCart, new IItemCartDeleteCallBack() {
+                        @Override
+                        public void onCallBack(Cart cart) {
+
+                        }
+                    });
                     cartRecyclerView.setAdapter(cartAdapter);
                     Toast.makeText(getActivity().getApplicationContext(), RESPONSE_LIST_NULL, Toast.LENGTH_SHORT).show();
                     return;
                 }
                 try {
+                    // Get list cart fill recycleview
                     listCart.clear();
                     JSONArray jsonArray = new JSONArray(response);
                     for (int i = 0; i < jsonArray.length(); i++) {
@@ -123,7 +138,12 @@ public class CartFragment extends Fragment {
                     }
                     cartLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext(), RecyclerView.VERTICAL, false);
                     cartRecyclerView.setLayoutManager(cartLayoutManager);
-                    cartAdapter = new CartAdapter(listCart);
+                    cartAdapter = new CartAdapter(listCart, new IItemCartDeleteCallBack() {
+                        @Override
+                        public void onCallBack(Cart cart) {
+                            showConfirmDeleteCartDialog(cart);
+                        }
+                    });
                     cartRecyclerView.setAdapter(cartAdapter);
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
@@ -144,6 +164,56 @@ public class CartFragment extends Fragment {
             }
         };
         requestQueue.add(getListCartRequest);
+    }
+
+    private void showConfirmDeleteCartDialog(Cart cart) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage("Do you want delete Cart?");
+        builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                deleteCart(cart);
+            }
+        });
+        builder.setNegativeButton("Cancle", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private void deleteCart(Cart cart) {
+        RequestQueue requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
+        StringRequest deleteCartRequest = new StringRequest(Request.Method.POST, SERVER_URL_DELETE_CART, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                if (response.equals(RESPONSE_SUCCESS)) {
+                    Toast.makeText(getActivity().getApplicationContext(), DELETE_CART_SUCCESS_MESSAGE, Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, DELETE_CART_SUCCESS_MESSAGE);
+                    getListCart();
+                } else {
+                    Toast.makeText(getActivity().getApplicationContext(), DELETE_CART_FAILED_MESSAGE, Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, DELETE_CART_SUCCESS_MESSAGE);
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "Server error: " + error.toString());
+            }
+        }) {
+            @Nullable
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                HashMap<String, String> params = new HashMap<>();
+                params.put(PARAM_ID, String.valueOf(cart.getId()));
+                return params;
+            }
+        };
+        requestQueue.add(deleteCartRequest);
     }
 
     @Override
