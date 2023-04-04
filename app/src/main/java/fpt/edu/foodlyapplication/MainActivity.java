@@ -15,13 +15,12 @@ import fpt.edu.foodlyapplication.adapter.PageMainAdapter;
 import fpt.edu.foodlyapplication.view.SignInActivity;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "MainActivity";
     private LinearLayout homeItem, cartItem, profileItem;
     private ImageView homeImg, cartImg, profileImg;
     private TextView homeText, cartText, profileText;
-
     private ViewPager2 pageMain;
     private String userEmailKey = "";
-    private static final String TAG = "MainActivity";
 
     public String getKeyUser() {
         return userEmailKey;
@@ -121,7 +120,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        Log.i(TAG, "onBackPressed: ");
         homeItem.setBackgroundResource(R.drawable.bgr_item_bottom_menu);
         cartItem.setBackgroundResource(R.color.White);
         profileItem.setBackgroundResource(R.color.White);

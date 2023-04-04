@@ -11,6 +11,8 @@ import fpt.edu.foodlyapplication.fragment.ProfileFragment;
 
 public class PageMainAdapter extends FragmentStateAdapter {
 
+    private static final int NUMBER_OF_PAGES = 3;
+
     public PageMainAdapter(@NonNull FragmentActivity fragmentActivity) {
         super(fragmentActivity);
     }
@@ -30,6 +32,6 @@ public class PageMainAdapter extends FragmentStateAdapter {
 
     @Override
     public int getItemCount() {
-        return 3;
+        return NUMBER_OF_PAGES;
     }
 }
