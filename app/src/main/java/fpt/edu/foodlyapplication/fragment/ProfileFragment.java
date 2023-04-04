@@ -98,31 +98,10 @@ public class ProfileFragment extends Fragment {
 
     private void setUserDetails() {
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
-        StringRequest getUserRequest = new StringRequest(Request.Method.POST, SERVER_URL_GET_USER, new Response.Listener<String>() {
+        StringRequest getUserByEmail = new StringRequest(Request.Method.POST, SERVER_URL_GET_USER, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                // Get response from sever
-                if (response.equals(RESPONSE_USER_NOT_EXISTS)) {
-                    Log.i(TAG, RESPONSE_USER_NOT_EXISTS);
-                } else {
-                    try {
-                        JSONArray jsonArray = new JSONArray(response);
-                        JSONObject jsonObject = jsonArray.getJSONObject(0);
-                        User user = new User();
-                        user.setEmail(jsonObject.getString("Email"));
-                        user.setFullname(jsonObject.getString("FullName"));
-                        user.setPassword(jsonObject.getString("Password"));
-                        Log.i(TAG, user.toString());
-                        // Set text
-                        tvEmail.setText(user.getEmail());
-                        tvFullname.setText(user.getFullname());
-
-                    } catch (JSONException e) {
-                        Log.e(TAG, e.toString());
-                        throw new RuntimeException(e);
-                    }
-
-                }
+                processGetUserByEmailResponse(response);
             }
         }, new Response.ErrorListener() {
             @Override
@@ -139,7 +118,32 @@ public class ProfileFragment extends Fragment {
                 return params;
             }
         };
-        requestQueue.add(getUserRequest);
+        requestQueue.add(getUserByEmail);
+    }
+
+    private void processGetUserByEmailResponse(String response) {
+        // Get response from sever
+        if (response.equals(RESPONSE_USER_NOT_EXISTS)) {
+            Log.i(TAG, RESPONSE_USER_NOT_EXISTS);
+        } else {
+            try {
+                JSONArray jsonArray = new JSONArray(response);
+                JSONObject jsonObject = jsonArray.getJSONObject(0);
+                User user = new User();
+                user.setEmail(jsonObject.getString("Email"));
+                user.setFullname(jsonObject.getString("FullName"));
+                user.setPassword(jsonObject.getString("Password"));
+                Log.i(TAG, user.toString());
+                // Set text
+                tvEmail.setText(user.getEmail());
+                tvFullname.setText(user.getFullname());
+
+            } catch (JSONException e) {
+                Log.e(TAG, e.toString());
+                throw new RuntimeException(e);
+            }
+
+        }
     }
 
 
