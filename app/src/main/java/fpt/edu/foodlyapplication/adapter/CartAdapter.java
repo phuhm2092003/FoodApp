@@ -16,17 +16,17 @@ import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import fpt.edu.foodlyapplication.R;
-import fpt.edu.foodlyapplication.interfaces.IItemCartDeleteCallBack;
+import fpt.edu.foodlyapplication.interfaces.onItemCartClick;
 import fpt.edu.foodlyapplication.model.Cart;
 import fpt.edu.foodlyapplication.utils.ServerURLManger;
 
 public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder> {
     private ArrayList<Cart> listCart;
-    private IItemCartDeleteCallBack iItemCartDeleteCallBack;
+    private onItemCartClick onItemCartClick;
 
-    public CartAdapter(ArrayList<Cart> listCart, IItemCartDeleteCallBack iItemCartDeleteCallBack) {
+    public CartAdapter(ArrayList<Cart> listCart, fpt.edu.foodlyapplication.interfaces.onItemCartClick onItemCartClick) {
         this.listCart = listCart;
-        this.iItemCartDeleteCallBack = iItemCartDeleteCallBack;
+        this.onItemCartClick = onItemCartClick;
     }
 
     @NonNull
@@ -61,8 +61,21 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         holder.itemCart.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                iItemCartDeleteCallBack.onCallBack(cart);
+                onItemCartClick.onDeleteCart(cart);
                 return true;
+            }
+        });
+
+        holder.addQuantityButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onItemCartClick.onChangeQuantity(view, cart);
+            }
+        });
+        holder.reduceQuantityButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onItemCartClick.onChangeQuantity(view, cart);
             }
         });
     }
@@ -87,7 +100,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             productSumPrice = (TextView) itemView.findViewById(R.id.productSumPrice);
             productQuantity = (TextView) itemView.findViewById(R.id.productQuantity);
             reduceQuantityButton = (ImageView) itemView.findViewById(R.id.reduceQuantityButton);
-            addQuantityButton = (ImageView) itemView.findViewById(R.id.addToCartButton);
+            addQuantityButton = (ImageView) itemView.findViewById(R.id.addQuantityButton);
         }
     }
 }

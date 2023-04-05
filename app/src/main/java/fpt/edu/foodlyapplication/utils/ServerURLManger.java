@@ -11,5 +11,6 @@ public class ServerURLManger {
     public static final String url_get_list_cart = http + "/listCart";
     public static final String url_add_cart = http + "/addCart";
     public static final String url_delete_cart = http + "/deleteCart";
+    public static final String url_update_quatity = http + "/updateQuantityCart";
 
 }

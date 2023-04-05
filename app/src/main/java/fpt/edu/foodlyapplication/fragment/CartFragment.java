@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -35,7 +37,7 @@ import java.util.Map;
 import fpt.edu.foodlyapplication.MainActivity;
 import fpt.edu.foodlyapplication.R;
 import fpt.edu.foodlyapplication.adapter.CartAdapter;
-import fpt.edu.foodlyapplication.interfaces.IItemCartDeleteCallBack;
+import fpt.edu.foodlyapplication.interfaces.onItemCartClick;
 import fpt.edu.foodlyapplication.model.Cart;
 import fpt.edu.foodlyapplication.utils.ServerURLManger;
 
@@ -49,12 +51,18 @@ public class CartFragment extends Fragment {
     public static final String DELETE_CART_FAILED_MESSAGE = "Delete cart failed";
     public static final String SERVER_URL_DELETE_CART = ServerURLManger.url_delete_cart;
     public static final String PARAM_ID = "id";
+    public static final String RESPOSE_CART_NULL = "Cart with specified id not found";
+    public static final String CART_NULL_MESSAGE = "Cart with specified id not found!";
+    public static final String UPDATE_SUCCESS_MESSAGE = "Update quantity cart successfull";
+    public static final String PARAM_QUATITY = "quantityNew";
     private ImageView backButton, loadListButton;
     private RecyclerView cartRecyclerView;
     private CartAdapter cartAdapter;
     private LinearLayoutManager cartLayoutManager;
     private ArrayList<Cart> listCart;
     private MainActivity mainActivity;
+    private TextView cartNullTextView;
+    private ConstraintLayout payButton;
 
     private static final String TAG = "CartFragment";
 
@@ -75,6 +83,8 @@ public class CartFragment extends Fragment {
         backButton = (ImageView) view.findViewById(R.id.backButton);
         loadListButton = (ImageView) view.findViewById(R.id.loadDataButton);
         cartRecyclerView = (RecyclerView) view.findViewById(R.id.cartRecyclerView);
+        cartNullTextView = (TextView) view.findViewById(R.id.cartNullTextView);
+        payButton = (ConstraintLayout) view.findViewById(R.id.payButton);
     }
 
     private void setListeners() {
@@ -98,54 +108,7 @@ public class CartFragment extends Fragment {
         StringRequest getListCartRequest = new StringRequest(Request.Method.POST, SERVER_URL_GET_LIST_CART, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-
-                if (response.equals(RESPONSE_ERROR)) {
-                    Log.e(TAG, "Get list cart error");
-                    return;
-                }
-
-                if (response.equals(RESPONSE_LIST_NULL)) {
-                    listCart.clear();
-                    cartLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext(), RecyclerView.VERTICAL, false);
-                    cartRecyclerView.setLayoutManager(cartLayoutManager);
-                    cartAdapter = new CartAdapter(listCart, new IItemCartDeleteCallBack() {
-                        @Override
-                        public void onCallBack(Cart cart) {
-
-                        }
-                    });
-                    cartRecyclerView.setAdapter(cartAdapter);
-                    Toast.makeText(getActivity().getApplicationContext(), RESPONSE_LIST_NULL, Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                try {
-                    // Get list cart fill recycleview
-                    listCart.clear();
-                    JSONArray jsonArray = new JSONArray(response);
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        JSONObject jsonObject = jsonArray.getJSONObject(i);
-                        Cart cart = new Cart();
-                        cart.setId(jsonObject.getInt("Id"));
-                        cart.setName(jsonObject.getString("Name"));
-                        cart.setImage(jsonObject.getString("Image"));
-                        cart.setQuantity(jsonObject.getInt("Quantity"));
-                        cart.setPrice(jsonObject.getInt("Price"));
-                        cart.setSumPrice(jsonObject.getInt("SumPrice"));
-                        Log.i(TAG, cart.toString());
-                        listCart.add(cart);
-                    }
-                    cartLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext(), RecyclerView.VERTICAL, false);
-                    cartRecyclerView.setLayoutManager(cartLayoutManager);
-                    cartAdapter = new CartAdapter(listCart, new IItemCartDeleteCallBack() {
-                        @Override
-                        public void onCallBack(Cart cart) {
-                            showConfirmDeleteCartDialog(cart);
-                        }
-                    });
-                    cartRecyclerView.setAdapter(cartAdapter);
-                } catch (JSONException e) {
-                    throw new RuntimeException(e);
-                }
+                processGetListCartResponse(response);
             }
         }, new Response.ErrorListener() {
             @Override
@@ -164,13 +127,72 @@ public class CartFragment extends Fragment {
         requestQueue.add(getListCartRequest);
     }
 
+    private void processGetListCartResponse(String response) {
+        if (response.equals(RESPONSE_ERROR)) {
+            Log.e(TAG, "Get list cart error");
+            return;
+        }
+
+        if (response.equals(RESPONSE_LIST_NULL)) {
+            cartNullTextView.setVisibility(View.VISIBLE);
+            cartRecyclerView.setVisibility(View.GONE);
+            payButton.setVisibility(View.GONE);
+            return;
+        }
+
+        try {
+            cartNullTextView.setVisibility(View.GONE);
+            cartRecyclerView.setVisibility(View.VISIBLE);
+            payButton.setVisibility(View.VISIBLE);
+            // Get list cart fill recycleview
+            listCart.clear();
+            JSONArray jsonArray = new JSONArray(response);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                Cart cart = new Cart();
+                cart.setId(jsonObject.getInt("Id"));
+                cart.setName(jsonObject.getString("Name"));
+                cart.setImage(jsonObject.getString("Image"));
+                cart.setQuantity(jsonObject.getInt("Quantity"));
+                cart.setPrice(jsonObject.getInt("Price"));
+                cart.setSumPrice(jsonObject.getInt("SumPrice"));
+                Log.i(TAG, cart.toString());
+                listCart.add(cart);
+            }
+            setUpCartRecycleView();
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void setUpCartRecycleView() {
+        cartLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext(), RecyclerView.VERTICAL, false);
+        cartRecyclerView.setLayoutManager(cartLayoutManager);
+        cartAdapter = new CartAdapter(listCart, new onItemCartClick() {
+            @Override
+            public void onDeleteCart(Cart cart) {
+                showConfirmDeleteCartDialog(cart);
+            }
+
+            @Override
+            public void onChangeQuantity(View view, Cart cart) {
+                if (view.getId() == R.id.addQuantityButton) {
+                    processUpadteQuantityCart(cart.getQuantity() + 1, cart);
+                } else {
+                    processUpadteQuantityCart((cart.getQuantity() - 1) < 1 ? 1 : cart.getQuantity() - 1, cart);
+                }
+
+            }
+        });
+        cartRecyclerView.setAdapter(cartAdapter);
+    }
     private void showConfirmDeleteCartDialog(Cart cart) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage("Do you want delete Cart?");
         builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                deleteCart(cart);
+                processDeleteCart(cart);
             }
         });
         builder.setNegativeButton("Cancle", new DialogInterface.OnClickListener() {
@@ -183,7 +205,7 @@ public class CartFragment extends Fragment {
         dialog.show();
     }
 
-    private void deleteCart(Cart cart) {
+    private void processDeleteCart(Cart cart) {
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
         StringRequest deleteCartRequest = new StringRequest(Request.Method.POST, SERVER_URL_DELETE_CART, new Response.Listener<String>() {
             @Override
@@ -213,6 +235,38 @@ public class CartFragment extends Fragment {
         };
         requestQueue.add(deleteCartRequest);
     }
+
+    private void processUpadteQuantityCart(int numberOfCart, Cart cart1) {
+        RequestQueue requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
+        StringRequest updateQuantityRequest = new StringRequest(Request.Method.POST, ServerURLManger.url_update_quatity, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                if (response.equals(RESPOSE_CART_NULL) || response.equals(RESPONSE_ERROR)) {
+                    Toast.makeText(getActivity().getApplicationContext(), CART_NULL_MESSAGE, Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, CART_NULL_MESSAGE);
+                    return;
+                }
+                Log.d(TAG, UPDATE_SUCCESS_MESSAGE);
+                getListCart();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        }) {
+            @Nullable
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                HashMap<String, String> param = new HashMap<>();
+                param.put(PARAM_ID, String.valueOf(cart1.getId()));
+                param.put(PARAM_QUATITY, String.valueOf(numberOfCart));
+                return param;
+            }
+        };
+        requestQueue.add(updateQuantityRequest);
+    }
+
 
     @Override
     public void onResume() {
