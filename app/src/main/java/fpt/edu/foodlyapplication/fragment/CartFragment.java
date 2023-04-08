@@ -45,11 +45,9 @@ public class CartFragment extends Fragment {
     public static final String RESPONSE_ERROR = "Error";
     public static final String RESPONSE_LIST_NULL = "List cart null";
     public static final String PARAM_EMAIL = "email";
-    public static final String SERVER_URL_GET_LIST_CART = ServerURLManger.url_get_list_cart;
     public static final String RESPONSE_SUCCESS = "Successful";
     public static final String DELETE_CART_SUCCESS_MESSAGE = "Delete cart successful";
     public static final String DELETE_CART_FAILED_MESSAGE = "Delete cart failed";
-    public static final String SERVER_URL_DELETE_CART = ServerURLManger.url_delete_cart;
     public static final String PARAM_ID = "id";
     public static final String RESPOSE_CART_NULL = "Cart with specified id not found";
     public static final String CART_NULL_MESSAGE = "Cart with specified id not found!";
@@ -71,9 +69,12 @@ public class CartFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_cart, container, false);
-        initView(view);
+
         mainActivity = (MainActivity) getActivity();
         listCart = new ArrayList<>();
+
+
+        initView(view);
         setListeners();
         getListCart();
         return view;
@@ -105,7 +106,7 @@ public class CartFragment extends Fragment {
 
     private void getListCart() {
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
-        StringRequest getListCartRequest = new StringRequest(Request.Method.POST, SERVER_URL_GET_LIST_CART, new Response.Listener<String>() {
+        StringRequest getListCartRequest = new StringRequest(Request.Method.POST, ServerURLManger.URL_GET_LIST_CART, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 processGetListCartResponse(response);
@@ -192,7 +193,7 @@ public class CartFragment extends Fragment {
         builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                processDeleteCart(cart);
+                processDeleteCartRequest(cart);
             }
         });
         builder.setNegativeButton("Cancle", new DialogInterface.OnClickListener() {
@@ -205,9 +206,9 @@ public class CartFragment extends Fragment {
         dialog.show();
     }
 
-    private void processDeleteCart(Cart cart) {
+    private void processDeleteCartRequest(Cart cart) {
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
-        StringRequest deleteCartRequest = new StringRequest(Request.Method.POST, SERVER_URL_DELETE_CART, new Response.Listener<String>() {
+        StringRequest deleteCartRequest = new StringRequest(Request.Method.POST, ServerURLManger.URL_DELETE_CART_BY_ID, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 if (response.equals(RESPONSE_SUCCESS)) {
@@ -238,7 +239,7 @@ public class CartFragment extends Fragment {
 
     private void processUpadteQuantityCart(int numberOfCart, Cart cart1) {
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
-        StringRequest updateQuantityRequest = new StringRequest(Request.Method.POST, ServerURLManger.url_update_quatity, new Response.Listener<String>() {
+        StringRequest updateQuantityRequest = new StringRequest(Request.Method.POST, ServerURLManger.URL_UPDATE_QUANTITY_CART, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 if (response.equals(RESPOSE_CART_NULL) || response.equals(RESPONSE_ERROR)) {

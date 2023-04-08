@@ -33,17 +33,16 @@ import fpt.edu.foodlyapplication.utils.ServerURLManger;
 public class SignUpActivity extends AppCompatActivity {
     private static final String TAG = "SignUpActivity";
     public static final String EMAIL_REGEX_PATTERN = "[a-zA-Z\\d._-]+@[a-z]+\\.+[a-z]+";
-    public static final String EMPTY_INPUT_MESSAGE = "Fullname or email or password is empty!";
-    public static final String INVALID_EMAIL_MESSAGE = "Please enter a valid email address!";
-    public static final String USER_EXISTS_MESSAGE = "User already exists!";
-    public static final String REGISTER_SUCCESS_MESSAGE = "Register new account successfull!";
-    public static final String REGISTER_FAILED_MESSAGE = "Register new account failed!";
+    public static final String EMPTY_INPUT_MESSAGE = "Please enter both fullname, email and password";
+    public static final String INVALID_EMAIL_MESSAGE = "Please enter a valid email address";
+    public static final String USER_EXISTS_MESSAGE = "User already exists";
+    public static final String REGISTER_SUCCESS_MESSAGE = "Register new account successfull";
+    public static final String REGISTER_FAILED_MESSAGE = "Register new account failed";
     public static final String RESPONSE_USER_EXISTS = "User Exists";
     public static final String RESPONSE_SUCCESS = "Successful";
     public static final String PARAM_EMAIL = "email";
     public static final String PARAM_FULLNAME = "fullname";
     public static final String PARAM_PASSWORD = "password";
-    public static final String SERVER_URL_REGISTER_ACCOUNT = ServerURLManger.url_register_account;
     private ImageView backButton, passwordToggleButton;
     private EditText fullnameEditText, emailEditText, passwordEditText;
     private ConstraintLayout registerButton;
@@ -53,6 +52,7 @@ public class SignUpActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
+
         initView();
         setListeners();
     }
@@ -104,19 +104,17 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     private void validateRegisterForm() {
-        String fullname = fullnameEditText.getText().toString().trim();
         String email = emailEditText.getText().toString().trim();
+        String fullname = fullnameEditText.getText().toString().trim();
         String password = passwordEditText.getText().toString().trim();
 
         if (isEmptyInput(fullname, email, password)) {
-            Toast.makeText(getApplicationContext(), EMPTY_INPUT_MESSAGE, Toast.LENGTH_SHORT).show();
-            Log.d(TAG, EMPTY_INPUT_MESSAGE);
+            showMessage(EMPTY_INPUT_MESSAGE);
             return;
         }
 
         if (isInvalidEmail(email)) {
-            Toast.makeText(getApplicationContext(), INVALID_EMAIL_MESSAGE, Toast.LENGTH_SHORT).show();
-            Log.d(TAG, INVALID_EMAIL_MESSAGE);
+            showMessage(INVALID_EMAIL_MESSAGE);
             return;
         }
 
@@ -133,7 +131,7 @@ public class SignUpActivity extends AppCompatActivity {
 
     private void processRegisterRequest(String fullname, String email, String password) {
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-        StringRequest registerRequest = new StringRequest(Request.Method.POST, SERVER_URL_REGISTER_ACCOUNT, new Response.Listener<String>() {
+        StringRequest registerRequest = new StringRequest(Request.Method.POST, ServerURLManger.URL_REGISTER_ACCOUNT, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 processRegisterResponse(response);
@@ -158,19 +156,23 @@ public class SignUpActivity extends AppCompatActivity {
         requestQueue.add(registerRequest);
     }
 
-    private void processRegisterResponse(String response) {
-        // Get response from sever
-        if (response.equals(RESPONSE_USER_EXISTS)) {
-            Toast.makeText(getApplicationContext(), USER_EXISTS_MESSAGE, Toast.LENGTH_SHORT).show();
-            Log.d(TAG, USER_EXISTS_MESSAGE);
-        } else if (response.equals(RESPONSE_SUCCESS)) {
-            Toast.makeText(getApplicationContext(), REGISTER_SUCCESS_MESSAGE, Toast.LENGTH_SHORT).show();
-            Log.d(TAG, REGISTER_SUCCESS_MESSAGE);
-            clearTextFields();
-        } else {
-            Toast.makeText(getApplicationContext(), REGISTER_FAILED_MESSAGE, Toast.LENGTH_SHORT).show();
-            Log.d(TAG, REGISTER_FAILED_MESSAGE);
+    private void processRegisterResponse(String serverResponse) {
+        switch (serverResponse) {
+            case RESPONSE_USER_EXISTS:
+                showMessage(USER_EXISTS_MESSAGE);
+                break;
+            case RESPONSE_SUCCESS:
+                showMessage(REGISTER_SUCCESS_MESSAGE);
+                clearTextFields();
+                break;
+            default:
+                showMessage(REGISTER_FAILED_MESSAGE);
+                break;
         }
+    }
+
+    private void showMessage(String userExistsMessage) {
+        Toast.makeText(getApplicationContext(), userExistsMessage, Toast.LENGTH_SHORT).show();
     }
 
     private void clearTextFields() {
@@ -178,6 +180,4 @@ public class SignUpActivity extends AppCompatActivity {
         emailEditText.setText("");
         passwordEditText.setText("");
     }
-
-
 }

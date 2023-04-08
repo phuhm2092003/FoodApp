@@ -32,15 +32,14 @@ import java.util.Map;
 import fpt.edu.foodlyapplication.MainActivity;
 import fpt.edu.foodlyapplication.R;
 import fpt.edu.foodlyapplication.adapter.ProductAdapter;
-import fpt.edu.foodlyapplication.interfaces.IItemAddCartCallBack;
+import fpt.edu.foodlyapplication.interfaces.onItemProductClick;
 import fpt.edu.foodlyapplication.model.Product;
 import fpt.edu.foodlyapplication.utils.ServerURLManger;
 
 public class HomeFragment extends Fragment {
     private static final String TAG = "HomeFragment";
-    private static final String RESPONSE_NO_DATA = "List product null";
+    private static final String RESPONSE_NULL_DATA = "List product null";
     private static final String RESPONSE_ERROR = "Error";
-    private static final String SERVER_URL_GET_LIST_PRODUCT = ServerURLManger.url_get_list_product;
     public static final String RESPONSE_SUCCESS = "Successful";
     public static final String ADD_SUCCESS_MESSAGE = "Add Product to cart successful";
     public static final String ADD_FAILED_MESSAGE = "Add Product to cart failed";
@@ -48,7 +47,7 @@ public class HomeFragment extends Fragment {
     public static final String PARAM_ID_PRODUCT = "idProduct";
     public static final String PARAM_QUATITY = "quantity";
     public static final int QUANTITY_DEFAULT = 1;
-    public static final String SERVER_URL_ADD_CART = ServerURLManger.url_add_cart;
+    public static final String GET_LIST_PRODUCT_ERROR_MESSAGE = "Get list product error";
     private RecyclerView productReycleView;
     private ProductAdapter productAdapter;
     private LinearLayoutManager layoutManagerProduct;
@@ -60,9 +59,11 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_home, container, false);
-        initView(view);
+
         productList = new ArrayList<>();
         mainActivity = (MainActivity) getActivity();
+
+        initView(view);
         getListProductRequest();
 
         return view;
@@ -74,7 +75,7 @@ public class HomeFragment extends Fragment {
 
     private void getListProductRequest() {
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
-        StringRequest getListProductRequest = new StringRequest(Request.Method.POST, SERVER_URL_GET_LIST_PRODUCT, new Response.Listener<String>() {
+        StringRequest getListProductRequest = new StringRequest(Request.Method.POST, ServerURLManger.UR_GET_LIST_PRODUCT, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 processGetListProductResponse(response);
@@ -88,41 +89,53 @@ public class HomeFragment extends Fragment {
         requestQueue.add(getListProductRequest);
     }
 
-    private void processGetListProductResponse(String response) {
-        if (!response.equals(RESPONSE_NO_DATA) && !response.equals(RESPONSE_ERROR)) {
-            try {
-                productList.clear();
-                JSONArray jsonArray = new JSONArray(response);
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    JSONObject jsonObject = jsonArray.getJSONObject(i);
-                    Product product = new Product();
-                    product.setId(jsonObject.getInt("Id"));
-                    product.setImage(jsonObject.getString("Image"));
-                    product.setName(jsonObject.getString("Name"));
-                    product.setPrice(jsonObject.getInt("Price"));
-                    Log.i(TAG, "Object Product: " + product.toString());
-                    productList.add(product);
-                }
-
-                layoutManagerProduct = new LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL, false);
-                productReycleView.setLayoutManager(layoutManagerProduct);
-                productAdapter = new ProductAdapter(productList, new IItemAddCartCallBack() {
-                    @Override
-                    public void onCallBack(Product product) {
-                        processAddProductToCartRequest(product);
-                    }
-                });
-                productReycleView.setAdapter(productAdapter);
-
-            } catch (JSONException e) {
-                throw new RuntimeException(e);
-            }
+    private void processGetListProductResponse(String serverResponse) {
+        if (serverResponse.equals(RESPONSE_ERROR)) {
+            showMessage(GET_LIST_PRODUCT_ERROR_MESSAGE);
+            return;
         }
+
+        if (serverResponse.equals(RESPONSE_NULL_DATA)) {
+            productList.clear();
+            setUpProductRecycleView();
+            return;
+        }
+
+        try {
+            productList.clear();
+            JSONArray jsonArray = new JSONArray(serverResponse);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                Product product = new Product();
+                product.setId(jsonObject.getInt("Id"));
+                product.setImage(jsonObject.getString("Image"));
+                product.setName(jsonObject.getString("Name"));
+                product.setPrice(jsonObject.getInt("Price"));
+                Log.i(TAG, "Object Product: " + product.toString());
+                productList.add(product);
+            }
+
+            setUpProductRecycleView();
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void setUpProductRecycleView() {
+        layoutManagerProduct = new LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL, false);
+        productReycleView.setLayoutManager(layoutManagerProduct);
+        productAdapter = new ProductAdapter(productList, new onItemProductClick() {
+            @Override
+            public void addProductToCart(Product product) {
+                processAddProductToCartRequest(product);
+            }
+        });
+        productReycleView.setAdapter(productAdapter);
     }
 
     private void processAddProductToCartRequest(Product product) {
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
-        StringRequest addCartRequest = new StringRequest(Request.Method.POST, SERVER_URL_ADD_CART, new Response.Listener<String>() {
+        StringRequest addProductTocartRequest = new StringRequest(Request.Method.POST, ServerURLManger.URL_ADD_CART, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 processAddProductToCartResponse(response);
@@ -144,18 +157,19 @@ public class HomeFragment extends Fragment {
                 return params;
             }
         };
-        requestQueue.add(addCartRequest);
+        requestQueue.add(addProductTocartRequest);
     }
 
-    private void processAddProductToCartResponse(String response) {
-        // Get response form server
-        if (response.equals(RESPONSE_SUCCESS)) {
-            Toast.makeText(mainActivity, ADD_SUCCESS_MESSAGE, Toast.LENGTH_SHORT).show();
-            Log.d(TAG, ADD_SUCCESS_MESSAGE);
+    private void processAddProductToCartResponse(String serverResponse) {
+        if (serverResponse.equals(RESPONSE_SUCCESS)) {
+            showMessage(ADD_SUCCESS_MESSAGE);
         } else {
-            Toast.makeText(mainActivity, ADD_FAILED_MESSAGE, Toast.LENGTH_SHORT).show();
-            Log.d(TAG, ADD_FAILED_MESSAGE);
+            showMessage(ADD_FAILED_MESSAGE);
         }
+    }
+
+    private void showMessage(String addSuccessMessage) {
+        Toast.makeText(getActivity().getApplicationContext(), addSuccessMessage, Toast.LENGTH_SHORT).show();
     }
 
     @Override

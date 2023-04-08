@@ -26,19 +26,17 @@ public class MainActivity extends AppCompatActivity {
         return userEmailKey;
     }
 
-    public void setKeyUser(String userEmailKey) {
-        this.userEmailKey = userEmailKey;
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initView();
         initPageMain();
-        // Get email user from SignInActivity set keyUser
-        setKeyUser(getIntent().getStringExtra(SignInActivity.EXTRA_USER_EMAIL));
-        Log.i(TAG, "KEY_USER: " + getKeyUser());
+
+        // set user====
+        userEmailKey = getIntent().getStringExtra(SignInActivity.EXTRA_USER_EMAIL);
+        Log.i(TAG, "KEY_EMAIL_USER: " + getKeyUser());
+
         // Bottom menu item selected
         homeItem.setOnClickListener(new View.OnClickListener() {
             @Override

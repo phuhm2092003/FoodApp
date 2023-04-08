@@ -38,10 +38,9 @@ public class SignInActivity extends AppCompatActivity {
     public static final String PARAM_PASSWORD = "password";
     public static final String EXTRA_USER_EMAIL = "EmailUser";
     public static final String RESPONSE_SUCCESS = "Successful";
-    public static final String LOGIN_FAILED_MESSAGE = "Login failed!";
+    public static final String LOGIN_FAILED_MESSAGE = "Login failed";
     public static final String LOGIN_SUCCESS_MESSAGE = "Login successful!";
-    private static final String EMPTY_INPUT_MESSAGE = "Email or password is empty!";
-    public static final String SERVER_URL_LOGIN = ServerURLManger.url_login;
+    private static final String EMPTY_INPUT_MESSAGE = "Please enter both email and password";
     private ImageView backButton, passwordToggleButton;
     private EditText emailEditText, passwordEditText;
     private ConstraintLayout loginButton;
@@ -52,10 +51,10 @@ public class SignInActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
+
         initView();
         setListeners();
     }
-
 
     private void initView() {
         backButton = (ImageView) findViewById(R.id.backButton);
@@ -102,24 +101,24 @@ public class SignInActivity extends AppCompatActivity {
         });
     }
 
-
     private void validateLoginForm() {
-        String emailInput = emailEditText.getText().toString().trim();
-        String passwordInput = passwordEditText.getText().toString().trim();
-        if (TextUtils.isEmpty(emailInput) || TextUtils.isEmpty(passwordInput)) {
-            Toast.makeText(this, EMPTY_INPUT_MESSAGE, Toast.LENGTH_SHORT).show();
-            Log.d(TAG, EMPTY_INPUT_MESSAGE);
+        String email = emailEditText.getText().toString().trim();
+        String password = passwordEditText.getText().toString().trim();
+
+        if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
+            showMessage(EMPTY_INPUT_MESSAGE);
             return;
         }
-        processLoginRequest(emailInput, passwordInput);
+
+        processLoginRequest(email, password);
     }
 
-    private void processLoginRequest(String userEmail, String userPassword) {
+    private void processLoginRequest(String email, String password) {
         RequestQueue requestQueue = Volley.newRequestQueue(SignInActivity.this);
-        StringRequest loginRequest = new StringRequest(Request.Method.POST, SERVER_URL_LOGIN, new Response.Listener<String>() {
+        StringRequest loginRequest = new StringRequest(Request.Method.POST, ServerURLManger.URL_LOGIN, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                processLoginResponse(response, userEmail);
+                processLoginResponse(response, email);
             }
         }, new Response.ErrorListener() {
             @Override
@@ -131,26 +130,27 @@ public class SignInActivity extends AppCompatActivity {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 // Add email and password in the request body to sever
-                HashMap<String, String> params = new HashMap<>();
-                params.put(PARAM_EMAIL, userEmail);
-                params.put(PARAM_PASSWORD, userPassword);
+                Map<String, String> params = new HashMap<>();
+                params.put(PARAM_EMAIL, email);
+                params.put(PARAM_PASSWORD, password);
                 return params;
             }
         };
         requestQueue.add(loginRequest);
     }
 
-    private void processLoginResponse(String response, String userEmail) {
-        // Get response from sever
-        if (response.equals(RESPONSE_SUCCESS)) {
+    private void processLoginResponse(String serverResponse, String email) {
+        if (serverResponse.equals(RESPONSE_SUCCESS)) {
+            showMessage(LOGIN_SUCCESS_MESSAGE);
             Intent intent = new Intent(SignInActivity.this, MainActivity.class);
-            intent.putExtra(EXTRA_USER_EMAIL, userEmail);
+            intent.putExtra(EXTRA_USER_EMAIL, email);
             startActivity(intent);
-            Toast.makeText(SignInActivity.this, LOGIN_SUCCESS_MESSAGE, Toast.LENGTH_SHORT).show();
-            Log.d(TAG, LOGIN_SUCCESS_MESSAGE);
         } else {
-            Toast.makeText(SignInActivity.this, LOGIN_FAILED_MESSAGE, Toast.LENGTH_SHORT).show();
-            Log.d(TAG, LOGIN_FAILED_MESSAGE);
+            showMessage(LOGIN_FAILED_MESSAGE);
         }
+    }
+
+    private void showMessage(String message) {
+        Toast.makeText(SignInActivity.this, message, Toast.LENGTH_SHORT).show();
     }
 }

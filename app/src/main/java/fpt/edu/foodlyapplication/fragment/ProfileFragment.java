@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -39,9 +40,10 @@ import fpt.edu.foodlyapplication.view.SignInActivity;
 public class ProfileFragment extends Fragment {
     public static final String EXTRA_USER_EMAIL = "EmailUser";
     private static final String TAG = "ProfileFragment";
-    public static final String SERVER_URL_GET_USER = ServerURLManger.url_get_user_by_email;
     public static final String RESPONSE_USER_NOT_EXISTS = "User Not Exists";
     public static final String PARAM_EMAIL = "email";
+    public static final String GET_USER_BY_EMAIL_ERROR_MESSAGE = "Get user by email error";
+    public static final String RESPONSE_ERROR = "Error";
     private TextView tvFullname, tvEmail;
     private MainActivity mainActivity;
     private ConstraintLayout itemAccoutInfo, itemChangePassword, itemLogout;
@@ -55,7 +57,7 @@ public class ProfileFragment extends Fragment {
         mainActivity = (MainActivity) getActivity();
         initView(view);
         setListeners();
-        setUserDetails();
+        processGetUserByEmailRequest();
 
         return view;
     }
@@ -96,9 +98,9 @@ public class ProfileFragment extends Fragment {
         });
     }
 
-    private void setUserDetails() {
+    private void processGetUserByEmailRequest() {
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
-        StringRequest getUserByEmail = new StringRequest(Request.Method.POST, SERVER_URL_GET_USER, new Response.Listener<String>() {
+        StringRequest getUserByEmail = new StringRequest(Request.Method.POST, ServerURLManger.URL_GET_USER_BY_EMAIL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 processGetUserByEmailResponse(response);
@@ -112,7 +114,7 @@ public class ProfileFragment extends Fragment {
             @Nullable
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
-                // Add email to request body in sever
+                // Add email to request body in server
                 HashMap<String, String> params = new HashMap<>();
                 params.put(PARAM_EMAIL, mainActivity.getKeyUser());
                 return params;
@@ -121,35 +123,39 @@ public class ProfileFragment extends Fragment {
         requestQueue.add(getUserByEmail);
     }
 
-    private void processGetUserByEmailResponse(String response) {
-        // Get response from sever
-        if (response.equals(RESPONSE_USER_NOT_EXISTS)) {
+    private void processGetUserByEmailResponse(String serverResponse) {
+
+        if (serverResponse.equals(RESPONSE_USER_NOT_EXISTS)) {
             Log.i(TAG, RESPONSE_USER_NOT_EXISTS);
-        } else {
-            try {
-                JSONArray jsonArray = new JSONArray(response);
-                JSONObject jsonObject = jsonArray.getJSONObject(0);
-                User user = new User();
-                user.setEmail(jsonObject.getString("Email"));
-                user.setFullname(jsonObject.getString("FullName"));
-                user.setPassword(jsonObject.getString("Password"));
-                Log.i(TAG, user.toString());
-                // Set text
-                tvEmail.setText(user.getEmail());
-                tvFullname.setText(user.getFullname());
+            return;
+        }
 
-            } catch (JSONException e) {
-                Log.e(TAG, e.toString());
-                throw new RuntimeException(e);
-            }
+        if (serverResponse.equals(RESPONSE_ERROR)){
+            Toast.makeText(getActivity().getApplicationContext(), GET_USER_BY_EMAIL_ERROR_MESSAGE, Toast.LENGTH_SHORT).show();
+            return;
+        }
 
+        try {
+            JSONArray jsonArray = new JSONArray(serverResponse);
+            JSONObject jsonObject = jsonArray.getJSONObject(0);
+            User user = new User();
+            user.setEmail(jsonObject.getString("Email"));
+            user.setFullname(jsonObject.getString("FullName"));
+            user.setPassword(jsonObject.getString("Password"));
+            Log.i(TAG, user.toString());
+            // Set data user
+            tvEmail.setText(user.getEmail());
+            tvFullname.setText(user.getFullname());
+        } catch (JSONException e) {
+            Log.e(TAG, e.toString());
+            throw new RuntimeException(e);
         }
     }
 
 
     @Override
     public void onResume() {
-        setUserDetails();
+        processGetUserByEmailRequest();
         super.onResume();
     }
 }
