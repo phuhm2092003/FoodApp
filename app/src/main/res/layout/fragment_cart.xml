@@ -74,11 +74,90 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
-                android:layout_marginBottom="16dp"
-                app:layout_constraintBottom_toTopOf="@+id/payButton"
+                android:layout_marginBottom="40dp"
+                app:layout_constraintBottom_toTopOf="@+id/layoutPayBill"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/backButton" />
+
+            <LinearLayout
+                android:id="@+id/layoutPayBill"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="35dp"
+                android:layout_marginEnd="35dp"
+                android:layout_marginBottom="50dp"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toTopOf="@+id/payButton"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:weightSum="2">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:alpha="0.7"
+                        android:fontFamily="@font/red_hat_display_medium"
+                        android:letterSpacing="0.02"
+                        android:text="Subtotal"
+                        android:textColor="@color/Gray1"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/subTotalTextView"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:alpha="0.7"
+                        android:fontFamily="@font/red_hat_display_medium"
+                        android:gravity="end"
+                        android:letterSpacing="0.02"
+                        android:text="$200"
+                        android:textColor="@color/Gray1"
+                        android:textSize="16sp" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="11dp"
+                    android:background="@drawable/line_dotted"
+                    android:alpha="0.7"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="25dp"
+                    android:orientation="horizontal"
+                    android:weightSum="2">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/red_hat_display_medium"
+                        android:text="Total"
+                        android:textColor="@color/MainBlack"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/totalTextView"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/red_hat_display_medium"
+                        android:gravity="end"
+                        android:text="$200"
+                        android:textColor="@color/MainBlack"
+                        android:textSize="18sp" />
+                </LinearLayout>
+            </LinearLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/payButton"

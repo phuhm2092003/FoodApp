@@ -47,7 +47,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
                     .into(holder.productImg);
         } else {
             Glide.with(holder.itemView.getContext())
-                    .load(ServerURLManger.http + "/" + product.getImage())
+                    .load(ServerURLManger.URL_BASE + "/" + product.getImage())
                     .placeholder(R.drawable.load_image)
                     .into(holder.productImg);
         }
@@ -58,17 +58,14 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         holder.addToCartButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onItemProductClick.addProductToCart(product);
+                onItemProductClick.onItemAddProductToCartClick(product);
             }
         });
     }
 
     @Override
     public int getItemCount() {
-        if (list == null) {
-            return 0;
-        }
-        return list.size();
+        return (list == null) ? 0 : list.size();
     }
 
     public static class ProductViewHolder extends RecyclerView.ViewHolder {

@@ -49,7 +49,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                     .into(holder.productImg);
         } else {
             Glide.with(holder.itemView.getContext())
-                    .load(ServerURLManger.http + "/" + cart.getImage())
+                    .load(ServerURLManger.URL_BASE + "/" + cart.getImage())
                     .placeholder(R.drawable.load_image)
                     .into(holder.productImg);
         }

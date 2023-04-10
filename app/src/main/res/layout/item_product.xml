@@ -31,6 +31,7 @@
             android:layout_marginTop="10dp"
             android:fontFamily="@font/red_hat_display_bold"
             android:text="Hamburger"
+            android:letterSpacing="0.02"
             android:textColor="@color/MainBlack"
             android:textSize="20dp"
             app:layout_constraintEnd_toEndOf="parent"

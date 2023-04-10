@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,7 +31,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,6 +43,7 @@ import fpt.edu.foodlyapplication.R;
 import fpt.edu.foodlyapplication.adapter.CartAdapter;
 import fpt.edu.foodlyapplication.interfaces.onItemCartClick;
 import fpt.edu.foodlyapplication.model.Cart;
+import fpt.edu.foodlyapplication.model.User;
 import fpt.edu.foodlyapplication.utils.ServerURLManger;
 
 public class CartFragment extends Fragment {
@@ -53,16 +58,23 @@ public class CartFragment extends Fragment {
     public static final String CART_NULL_MESSAGE = "Cart with specified id not found!";
     public static final String UPDATE_SUCCESS_MESSAGE = "Update quantity cart successfull";
     public static final String PARAM_QUATITY = "quantityNew";
+    public static final String RESPONSE_USER_NOT_EXISTS = "User Not Exists";
+    public static final String PAY_BILL_SUCCES_MESSAGE = "Pay bill succesfull";
+    public static final String PAY_BILL_FAILED_MESSAGE = "Pay bill failed";
+    public static final String PARAM_CUSTOMER_NAME = "customerName";
+    public static final String PRAM_DATE_BUY = "dateBuy";
+    public static final String PRAM_TOTAL = "total";
     private ImageView backButton, loadListButton;
     private RecyclerView cartRecyclerView;
     private CartAdapter cartAdapter;
     private LinearLayoutManager cartLayoutManager;
     private ArrayList<Cart> listCart;
     private MainActivity mainActivity;
-    private TextView cartNullTextView;
+    private TextView cartNullTextView, subTotalTextView, totalTextView;
     private ConstraintLayout payButton;
-
+    private LinearLayout layoutBill;
     private static final String TAG = "CartFragment";
+    private User user;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -72,9 +84,9 @@ public class CartFragment extends Fragment {
 
         mainActivity = (MainActivity) getActivity();
         listCart = new ArrayList<>();
-
-
+        user = new User();
         initView(view);
+        processGetUserByEmailRequest();
         setListeners();
         getListCart();
         return view;
@@ -86,6 +98,9 @@ public class CartFragment extends Fragment {
         cartRecyclerView = (RecyclerView) view.findViewById(R.id.cartRecyclerView);
         cartNullTextView = (TextView) view.findViewById(R.id.cartNullTextView);
         payButton = (ConstraintLayout) view.findViewById(R.id.payButton);
+        layoutBill = (LinearLayout) view.findViewById(R.id.layoutPayBill);
+        subTotalTextView = (TextView) view.findViewById(R.id.subTotalTextView);
+        totalTextView = (TextView) view.findViewById(R.id.totalTextView);
     }
 
     private void setListeners() {
@@ -102,8 +117,64 @@ public class CartFragment extends Fragment {
                 getListCart();
             }
         });
+
+        payButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                processPayBillRequest();
+            }
+        });
     }
 
+    private void processGetUserByEmailRequest() {
+        RequestQueue requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
+        StringRequest getUserByEmail = new StringRequest(Request.Method.POST, ServerURLManger.URL_GET_USER_BY_EMAIL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                processGetUserByEmailResponse(response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.i(TAG, "Sever error:  " + error.toString());
+            }
+        }) {
+            @Nullable
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                // Add email to request body in server
+                HashMap<String, String> params = new HashMap<>();
+                params.put(PARAM_EMAIL, mainActivity.getKeyUser());
+                return params;
+            }
+        };
+        requestQueue.add(getUserByEmail);
+    }
+
+    private void processGetUserByEmailResponse(String serverResponse) {
+
+        if (serverResponse.equals(RESPONSE_USER_NOT_EXISTS)) {
+            Log.i(TAG, RESPONSE_USER_NOT_EXISTS);
+            return;
+        }
+
+        if (serverResponse.equals(RESPONSE_ERROR)) {
+            Toast.makeText(getActivity().getApplicationContext(), ServerURLManger.URL_GET_USER_BY_EMAIL, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        try {
+            JSONArray jsonArray = new JSONArray(serverResponse);
+            JSONObject jsonObject = jsonArray.getJSONObject(0);
+            user.setEmail(jsonObject.getString("Email"));
+            user.setFullname(jsonObject.getString("FullName"));
+            user.setPassword(jsonObject.getString("Password"));
+            Log.i(TAG, user.toString());
+        } catch (JSONException e) {
+            Log.e(TAG, e.toString());
+            throw new RuntimeException(e);
+        }
+    }
     private void getListCart() {
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
         StringRequest getListCartRequest = new StringRequest(Request.Method.POST, ServerURLManger.URL_GET_LIST_CART, new Response.Listener<String>() {
@@ -138,13 +209,16 @@ public class CartFragment extends Fragment {
             cartNullTextView.setVisibility(View.VISIBLE);
             cartRecyclerView.setVisibility(View.GONE);
             payButton.setVisibility(View.GONE);
+            layoutBill.setVisibility(View.GONE);
             return;
         }
 
+        // Parse JSON response to create Cart objects and add to listCart
         try {
             cartNullTextView.setVisibility(View.GONE);
             cartRecyclerView.setVisibility(View.VISIBLE);
             payButton.setVisibility(View.VISIBLE);
+            layoutBill.setVisibility(View.VISIBLE);
             // Get list cart fill recycleview
             listCart.clear();
             JSONArray jsonArray = new JSONArray(response);
@@ -160,10 +234,21 @@ public class CartFragment extends Fragment {
                 Log.i(TAG, cart.toString());
                 listCart.add(cart);
             }
+
+            setTotalBill();
             setUpCartRecycleView();
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void setTotalBill() {
+        int total = 0;
+        for (Cart cart : listCart) {
+            total += cart.getSumPrice();
+        }
+        subTotalTextView.setText(String.format("$%d", total));
+        totalTextView.setText(String.format("$%d", total));
     }
 
     private void setUpCartRecycleView() {
@@ -187,6 +272,7 @@ public class CartFragment extends Fragment {
         });
         cartRecyclerView.setAdapter(cartAdapter);
     }
+
     private void showConfirmDeleteCartDialog(Cart cart) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage("Do you want delete Cart?");
@@ -268,10 +354,78 @@ public class CartFragment extends Fragment {
         requestQueue.add(updateQuantityRequest);
     }
 
+    private void processPayBillRequest() {
+        RequestQueue requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
+        StringRequest addBillRequest = new StringRequest(Request.Method.POST, ServerURLManger.URL_ADD_BILL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                if (response.equals(RESPONSE_SUCCESS)) {
+                    Toast.makeText(getActivity().getApplicationContext(), PAY_BILL_SUCCES_MESSAGE, Toast.LENGTH_SHORT).show();
+                    processDeleteCartByEmailRequest();
+                    return;
+                }
+                Toast.makeText(getActivity().getApplicationContext(), PAY_BILL_FAILED_MESSAGE, Toast.LENGTH_SHORT).show();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "Server erro: " + error.toString());
+            }
+        }) {
+            @Nullable
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                // Add email to request body in server
+                HashMap<String, String> params = new HashMap<>();
+                params.put(PARAM_CUSTOMER_NAME, user.getFullname());
+                Date currentTime = Calendar.getInstance().getTime();
+
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                params.put(PRAM_DATE_BUY, simpleDateFormat.format(currentTime).toString());
+                params.put(PRAM_TOTAL, subTotalTextView.getText().toString().substring(1));
+                return params;
+            }
+        };
+        requestQueue.add(addBillRequest);
+    }
+
+    private void processDeleteCartByEmailRequest() {
+        RequestQueue requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
+        StringRequest deleteCartRequest = new StringRequest(Request.Method.POST, ServerURLManger.URL_DELETE_CART_BY_EMAIL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                if (response.equals(RESPONSE_SUCCESS)) {
+                    getListCart();
+                } else {
+                    Toast.makeText(getActivity().getApplicationContext(), DELETE_CART_FAILED_MESSAGE, Toast.LENGTH_SHORT).show();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "Server error: " + error.toString());
+            }
+        }) {
+            @Nullable
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                HashMap<String, String> params = new HashMap<>();
+                Log.i(TAG, "getParams: " + user.toString());
+                params.put(PARAM_EMAIL, user.getEmail());
+                return params;
+            }
+        };
+        requestQueue.add(deleteCartRequest);
+    }
+
+
+
+
 
     @Override
     public void onResume() {
         super.onResume();
         getListCart();
+        processGetUserByEmailRequest();
     }
 }

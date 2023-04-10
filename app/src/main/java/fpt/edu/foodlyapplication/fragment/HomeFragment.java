@@ -42,12 +42,12 @@ public class HomeFragment extends Fragment {
     private static final String RESPONSE_ERROR = "Error";
     public static final String RESPONSE_SUCCESS = "Successful";
     public static final String ADD_SUCCESS_MESSAGE = "Add Product to cart successful";
+    public static final String GET_LIST_PRODUCT_ERROR_MESSAGE = "Get list product error";
     public static final String ADD_FAILED_MESSAGE = "Add Product to cart failed";
     public static final String PARAM_ID_USER = "idUser";
     public static final String PARAM_ID_PRODUCT = "idProduct";
     public static final String PARAM_QUATITY = "quantity";
     public static final int QUANTITY_DEFAULT = 1;
-    public static final String GET_LIST_PRODUCT_ERROR_MESSAGE = "Get list product error";
     private RecyclerView productReycleView;
     private ProductAdapter productAdapter;
     private LinearLayoutManager layoutManagerProduct;
@@ -64,7 +64,7 @@ public class HomeFragment extends Fragment {
         mainActivity = (MainActivity) getActivity();
 
         initView(view);
-        getListProductRequest();
+        processGetListProductRequest();
 
         return view;
     }
@@ -73,9 +73,9 @@ public class HomeFragment extends Fragment {
         productReycleView = (RecyclerView) view.findViewById(R.id.productReycleView);
     }
 
-    private void getListProductRequest() {
+    private void processGetListProductRequest() {
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
-        StringRequest getListProductRequest = new StringRequest(Request.Method.POST, ServerURLManger.UR_GET_LIST_PRODUCT, new Response.Listener<String>() {
+        StringRequest getListProductRequest = new StringRequest(Request.Method.POST, ServerURLManger.URL_GET_LIST_PRODUCT, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 processGetListProductResponse(response);
@@ -90,43 +90,45 @@ public class HomeFragment extends Fragment {
     }
 
     private void processGetListProductResponse(String serverResponse) {
-        if (serverResponse.equals(RESPONSE_ERROR)) {
+        productList.clear();
+        if (RESPONSE_ERROR.equals(serverResponse)) {
             showMessage(GET_LIST_PRODUCT_ERROR_MESSAGE);
             return;
         }
 
-        if (serverResponse.equals(RESPONSE_NULL_DATA)) {
-            productList.clear();
-            setUpProductRecycleView();
+        if (RESPONSE_NULL_DATA.equals(serverResponse)) {
+            setUpProductRecyclerView();
             return;
         }
 
+        // Parser JSON response form server to product object after add productList
         try {
-            productList.clear();
             JSONArray jsonArray = new JSONArray(serverResponse);
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
+
                 Product product = new Product();
                 product.setId(jsonObject.getInt("Id"));
                 product.setImage(jsonObject.getString("Image"));
                 product.setName(jsonObject.getString("Name"));
                 product.setPrice(jsonObject.getInt("Price"));
-                Log.i(TAG, "Object Product: " + product.toString());
+                Log.d(TAG, "Object Product: " + product.toString());
+
                 productList.add(product);
             }
 
-            setUpProductRecycleView();
+            setUpProductRecyclerView();
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private void setUpProductRecycleView() {
+    private void setUpProductRecyclerView() {
         layoutManagerProduct = new LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL, false);
         productReycleView.setLayoutManager(layoutManagerProduct);
         productAdapter = new ProductAdapter(productList, new onItemProductClick() {
             @Override
-            public void addProductToCart(Product product) {
+            public void onItemAddProductToCartClick(Product product) {
                 processAddProductToCartRequest(product);
             }
         });
@@ -161,21 +163,18 @@ public class HomeFragment extends Fragment {
     }
 
     private void processAddProductToCartResponse(String serverResponse) {
-        if (serverResponse.equals(RESPONSE_SUCCESS)) {
-            showMessage(ADD_SUCCESS_MESSAGE);
-        } else {
-            showMessage(ADD_FAILED_MESSAGE);
-        }
+        String message = RESPONSE_SUCCESS.equals(serverResponse) ? ADD_SUCCESS_MESSAGE : ADD_FAILED_MESSAGE;
+        showMessage(message);
     }
 
-    private void showMessage(String addSuccessMessage) {
-        Toast.makeText(getActivity().getApplicationContext(), addSuccessMessage, Toast.LENGTH_SHORT).show();
+    private void showMessage(String message) {
+        Toast.makeText(getActivity().getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        getListProductRequest();
+        processGetListProductRequest();
     }
 
 }
