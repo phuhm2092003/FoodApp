@@ -145,13 +145,13 @@ public class SignInActivity extends AppCompatActivity {
     private void processLoginResponse(String serverResponse, String email) {
         if (serverResponse.equals(RESPONSE_SUCCESS)) {
             showMessage(LOGIN_SUCCESS_MESSAGE);
-            lauchMainActivity(email);
+            launchMainActivity(email);
         } else {
             showMessage(LOGIN_FAILED_MESSAGE);
         }
     }
 
-    private void lauchMainActivity(String email) {
+    private void launchMainActivity(String email) {
         Intent intent = new Intent(SignInActivity.this, MainActivity.class);
         intent.putExtra(EXTRA_USER_EMAIL, email);
         startActivity(intent);
