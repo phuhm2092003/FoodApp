@@ -39,7 +39,7 @@ public class SignInActivity extends AppCompatActivity {
     public static final String EXTRA_USER_EMAIL = "EmailUser";
     public static final String RESPONSE_SUCCESS = "Successfull";
     public static final String LOGIN_FAILED_MESSAGE = "Login failed";
-    public static final String LOGIN_SUCCESS_MESSAGE = "Login successful!";
+    public static final String LOGIN_SUCCESS_MESSAGE = "Login successful";
     public static final String EMPTY_INPUT_MESSAGE = "Please enter both email and password";
 
     private ImageView backButton, passwordToggleButton;
