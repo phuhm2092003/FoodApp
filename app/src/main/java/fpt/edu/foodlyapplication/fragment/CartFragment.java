@@ -299,11 +299,9 @@ public class CartFragment extends Fragment {
             public void onResponse(String response) {
                 if (response.equals(RESPONSE_SUCCESS)) {
                     Toast.makeText(getActivity().getApplicationContext(), DELETE_CART_SUCCESS_MESSAGE, Toast.LENGTH_SHORT).show();
-                    Log.d(TAG, DELETE_CART_SUCCESS_MESSAGE);
                     getListCart();
                 } else {
                     Toast.makeText(getActivity().getApplicationContext(), DELETE_CART_FAILED_MESSAGE, Toast.LENGTH_SHORT).show();
-                    Log.d(TAG, DELETE_CART_SUCCESS_MESSAGE);
                 }
             }
         }, new Response.ErrorListener() {
@@ -333,7 +331,6 @@ public class CartFragment extends Fragment {
                     Log.d(TAG, CART_NULL_MESSAGE);
                     return;
                 }
-                Log.d(TAG, UPDATE_SUCCESS_MESSAGE);
                 getListCart();
             }
         }, new Response.ErrorListener() {
