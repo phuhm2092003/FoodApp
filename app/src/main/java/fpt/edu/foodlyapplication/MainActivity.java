@@ -33,11 +33,26 @@ public class MainActivity extends AppCompatActivity {
         initView();
         initPageMain();
 
-        // set user====
         userEmailKey = getIntent().getStringExtra(SignInActivity.EXTRA_USER_EMAIL);
         Log.i(TAG, "KEY_EMAIL_USER: " + getKeyUser());
 
-        // Bottom menu item selected
+        setListeners();
+    }
+
+    private void initView() {
+        homeItem = (LinearLayout) findViewById(R.id.homeItem);
+        cartItem = (LinearLayout) findViewById(R.id.cartItem);
+        profileItem = (LinearLayout) findViewById(R.id.profileItem);
+        homeImg = (ImageView) findViewById(R.id.homeImg);
+        cartImg = (ImageView) findViewById(R.id.cartImg);
+        profileImg = (ImageView) findViewById(R.id.profileImg);
+        homeText = (TextView) findViewById(R.id.homeText);
+        cartText = (TextView) findViewById(R.id.cartText);
+        profileText = (TextView) findViewById(R.id.profileText);
+        pageMain = (ViewPager2) findViewById(R.id.pageMain);
+    }
+
+    private void setListeners() {
         homeItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -96,24 +111,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
     private void initPageMain() {
         PageMainAdapter pageMainAdapter = new PageMainAdapter(MainActivity.this);
         pageMain.setAdapter(pageMainAdapter);
         pageMain.setUserInputEnabled(false);
-    }
-
-    private void initView() {
-        homeItem = (LinearLayout) findViewById(R.id.homeItem);
-        cartItem = (LinearLayout) findViewById(R.id.cartItem);
-        profileItem = (LinearLayout) findViewById(R.id.profileItem);
-        homeImg = (ImageView) findViewById(R.id.homeImg);
-        cartImg = (ImageView) findViewById(R.id.cartImg);
-        profileImg = (ImageView) findViewById(R.id.profileImg);
-        homeText = (TextView) findViewById(R.id.homeText);
-        cartText = (TextView) findViewById(R.id.cartText);
-        profileText = (TextView) findViewById(R.id.profileText);
-        pageMain = (ViewPager2) findViewById(R.id.pageMain);
     }
 
     @Override
