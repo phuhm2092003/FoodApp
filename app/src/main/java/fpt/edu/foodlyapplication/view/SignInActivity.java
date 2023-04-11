@@ -31,16 +31,16 @@ import java.util.Map;
 import fpt.edu.foodlyapplication.MainActivity;
 import fpt.edu.foodlyapplication.R;
 import fpt.edu.foodlyapplication.utils.ServerURLManger;
-
 public class SignInActivity extends AppCompatActivity {
     private static final String TAG = "SignInActivity";
     public static final String PARAM_EMAIL = "email";
     public static final String PARAM_PASSWORD = "password";
     public static final String EXTRA_USER_EMAIL = "EmailUser";
-    public static final String RESPONSE_SUCCESS = "Successful";
+    public static final String RESPONSE_SUCCESS = "Successfull";
     public static final String LOGIN_FAILED_MESSAGE = "Login failed";
     public static final String LOGIN_SUCCESS_MESSAGE = "Login successful!";
-    private static final String EMPTY_INPUT_MESSAGE = "Please enter both email and password";
+    public static final String EMPTY_INPUT_MESSAGE = "Please enter both email and password";
+
     private ImageView backButton, passwordToggleButton;
     private EditText emailEditText, passwordEditText;
     private ConstraintLayout loginButton;
@@ -105,12 +105,15 @@ public class SignInActivity extends AppCompatActivity {
         String email = emailEditText.getText().toString().trim();
         String password = passwordEditText.getText().toString().trim();
 
-        if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
+        if (isEmptyInput(email, password)) {
             showMessage(EMPTY_INPUT_MESSAGE);
-            return;
+        }else {
+            processLoginRequest(email, password);
         }
+    }
 
-        processLoginRequest(email, password);
+    private boolean isEmptyInput(String email, String password) {
+        return TextUtils.isEmpty(email) || TextUtils.isEmpty(password);
     }
 
     private void processLoginRequest(String email, String password) {
@@ -142,12 +145,16 @@ public class SignInActivity extends AppCompatActivity {
     private void processLoginResponse(String serverResponse, String email) {
         if (serverResponse.equals(RESPONSE_SUCCESS)) {
             showMessage(LOGIN_SUCCESS_MESSAGE);
-            Intent intent = new Intent(SignInActivity.this, MainActivity.class);
-            intent.putExtra(EXTRA_USER_EMAIL, email);
-            startActivity(intent);
+            lauchMainActivity(email);
         } else {
             showMessage(LOGIN_FAILED_MESSAGE);
         }
+    }
+
+    private void lauchMainActivity(String email) {
+        Intent intent = new Intent(SignInActivity.this, MainActivity.class);
+        intent.putExtra(EXTRA_USER_EMAIL, email);
+        startActivity(intent);
     }
 
     private void showMessage(String message) {
