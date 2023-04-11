@@ -85,10 +85,11 @@ public class CartFragment extends Fragment {
         mainActivity = (MainActivity) getActivity();
         listCart = new ArrayList<>();
         user = new User();
+
         initView(view);
-        processGetUserByEmailRequest();
         setListeners();
-        getListCart();
+        processGetUserByEmailRequest();
+        processGetListCartRequest();
         return view;
     }
 
@@ -114,7 +115,7 @@ public class CartFragment extends Fragment {
         loadListButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getListCart();
+                processGetListCartRequest();
             }
         });
 
@@ -152,17 +153,15 @@ public class CartFragment extends Fragment {
     }
 
     private void processGetUserByEmailResponse(String serverResponse) {
-
         if (serverResponse.equals(RESPONSE_USER_NOT_EXISTS)) {
             Log.i(TAG, RESPONSE_USER_NOT_EXISTS);
             return;
         }
-
         if (serverResponse.equals(RESPONSE_ERROR)) {
-            Toast.makeText(getActivity().getApplicationContext(), ServerURLManger.URL_GET_USER_BY_EMAIL, Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), ServerURLManger.URL_GET_USER_BY_EMAIL, Toast.LENGTH_SHORT).show();
             return;
         }
-
+        // Parser Json to user object from response server
         try {
             JSONArray jsonArray = new JSONArray(serverResponse);
             JSONObject jsonObject = jsonArray.getJSONObject(0);
@@ -171,11 +170,11 @@ public class CartFragment extends Fragment {
             user.setPassword(jsonObject.getString("Password"));
             Log.i(TAG, user.toString());
         } catch (JSONException e) {
-            Log.e(TAG, e.toString());
             throw new RuntimeException(e);
         }
     }
-    private void getListCart() {
+
+    private void processGetListCartRequest() {
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
         StringRequest getListCartRequest = new StringRequest(Request.Method.POST, ServerURLManger.URL_GET_LIST_CART, new Response.Listener<String>() {
             @Override
@@ -204,7 +203,6 @@ public class CartFragment extends Fragment {
             Log.e(TAG, "Get list cart error");
             return;
         }
-
         if (response.equals(RESPONSE_LIST_NULL)) {
             cartNullTextView.setVisibility(View.VISIBLE);
             cartRecyclerView.setVisibility(View.GONE);
@@ -212,7 +210,6 @@ public class CartFragment extends Fragment {
             layoutBill.setVisibility(View.GONE);
             return;
         }
-
         // Parse JSON response to create Cart objects and add to listCart
         try {
             cartNullTextView.setVisibility(View.GONE);
@@ -262,11 +259,18 @@ public class CartFragment extends Fragment {
 
             @Override
             public void onChangeQuantity(View view, Cart cart) {
+                int newQuantity = cart.getQuantity();
+
                 if (view.getId() == R.id.addQuantityButton) {
-                    processUpadteQuantityCart(cart.getQuantity() + 1, cart);
+                    newQuantity++;
                 } else {
-                    processUpadteQuantityCart((cart.getQuantity() - 1) < 1 ? 1 : cart.getQuantity() - 1, cart);
+                    newQuantity--;
+                    if (newQuantity < 1) {
+                        newQuantity = 1;
+                    }
                 }
+
+                processUpdateQuantityCart(newQuantity, cart);
 
             }
         });
@@ -299,7 +303,7 @@ public class CartFragment extends Fragment {
             public void onResponse(String response) {
                 if (response.equals(RESPONSE_SUCCESS)) {
                     Toast.makeText(getActivity().getApplicationContext(), DELETE_CART_SUCCESS_MESSAGE, Toast.LENGTH_SHORT).show();
-                    getListCart();
+                    processGetListCartRequest();
                 } else {
                     Toast.makeText(getActivity().getApplicationContext(), DELETE_CART_FAILED_MESSAGE, Toast.LENGTH_SHORT).show();
                 }
@@ -321,17 +325,16 @@ public class CartFragment extends Fragment {
         requestQueue.add(deleteCartRequest);
     }
 
-    private void processUpadteQuantityCart(int numberOfCart, Cart cart1) {
+    private void processUpdateQuantityCart(int numberOfCart, Cart cart1) {
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
         StringRequest updateQuantityRequest = new StringRequest(Request.Method.POST, ServerURLManger.URL_UPDATE_QUANTITY_CART, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 if (response.equals(RESPOSE_CART_NULL) || response.equals(RESPONSE_ERROR)) {
                     Toast.makeText(getActivity().getApplicationContext(), CART_NULL_MESSAGE, Toast.LENGTH_SHORT).show();
-                    Log.d(TAG, CART_NULL_MESSAGE);
                     return;
                 }
-                getListCart();
+                processGetListCartRequest();
             }
         }, new Response.ErrorListener() {
             @Override
@@ -392,7 +395,7 @@ public class CartFragment extends Fragment {
             @Override
             public void onResponse(String response) {
                 if (response.equals(RESPONSE_SUCCESS)) {
-                    getListCart();
+                    processGetListCartRequest();
                 } else {
                     Toast.makeText(getActivity().getApplicationContext(), DELETE_CART_FAILED_MESSAGE, Toast.LENGTH_SHORT).show();
                 }
@@ -407,7 +410,6 @@ public class CartFragment extends Fragment {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 HashMap<String, String> params = new HashMap<>();
-                Log.i(TAG, "getParams: " + user.toString());
                 params.put(PARAM_EMAIL, user.getEmail());
                 return params;
             }
@@ -418,7 +420,7 @@ public class CartFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        getListCart();
+        processGetListCartRequest();
         processGetUserByEmailRequest();
     }
 }
