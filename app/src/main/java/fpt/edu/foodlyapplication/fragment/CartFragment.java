@@ -415,10 +415,6 @@ public class CartFragment extends Fragment {
         requestQueue.add(deleteCartRequest);
     }
 
-
-
-
-
     @Override
     public void onResume() {
         super.onResume();
