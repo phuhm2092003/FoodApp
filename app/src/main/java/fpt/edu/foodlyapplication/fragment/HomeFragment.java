@@ -51,7 +51,6 @@ public class HomeFragment extends Fragment {
     private RecyclerView productReycleView;
     private ProductAdapter productAdapter;
     private LinearLayoutManager layoutManagerProduct;
-    private ArrayList<Product> productList;
     private MainActivity mainActivity;
 
     @Override
@@ -60,7 +59,6 @@ public class HomeFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
-        productList = new ArrayList<>();
         mainActivity = (MainActivity) getActivity();
 
         initView(view);
@@ -90,14 +88,14 @@ public class HomeFragment extends Fragment {
     }
 
     private void processGetListProductResponse(String serverResponse) {
-        productList.clear();
+        ArrayList<Product> productList = new ArrayList<>();
         if (serverResponse.equals(RESPONSE_ERROR)) {
             showMessage(GET_LIST_PRODUCT_ERROR_MESSAGE);
             return;
         }
 
         if (serverResponse.equals(RESPONSE_NULL_DATA)) {
-            setUpProductRecyclerView();
+            setUpProductRecyclerView(productList);
             return;
         }
 
@@ -117,13 +115,13 @@ public class HomeFragment extends Fragment {
                 productList.add(product);
             }
 
-            setUpProductRecyclerView();
+            setUpProductRecyclerView(productList);
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private void setUpProductRecyclerView() {
+    private void setUpProductRecyclerView(ArrayList<Product> productList) {
         layoutManagerProduct = new LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL, false);
         productReycleView.setLayoutManager(layoutManagerProduct);
         productAdapter = new ProductAdapter(productList, new onItemProductClick() {
