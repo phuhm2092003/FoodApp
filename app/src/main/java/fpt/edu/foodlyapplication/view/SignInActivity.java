@@ -31,6 +31,7 @@ import java.util.Map;
 import fpt.edu.foodlyapplication.MainActivity;
 import fpt.edu.foodlyapplication.R;
 import fpt.edu.foodlyapplication.utils.ServerURLManger;
+
 public class SignInActivity extends AppCompatActivity {
     private static final String TAG = "SignInActivity";
     public static final String PARAM_EMAIL = "email";
@@ -107,7 +108,7 @@ public class SignInActivity extends AppCompatActivity {
 
         if (isEmptyInput(email, password)) {
             showMessage(EMPTY_INPUT_MESSAGE);
-        }else {
+        } else {
             processLoginRequest(email, password);
         }
     }
