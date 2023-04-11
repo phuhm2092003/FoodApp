@@ -152,12 +152,12 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     private void launchMainActivity(String email) {
-        Intent intent = new Intent(SignInActivity.this, MainActivity.class);
+        Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra(EXTRA_USER_EMAIL, email);
         startActivity(intent);
     }
 
     private void showMessage(String message) {
-        Toast.makeText(SignInActivity.this, message, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 }
