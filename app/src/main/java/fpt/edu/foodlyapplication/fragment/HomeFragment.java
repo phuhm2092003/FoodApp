@@ -88,12 +88,12 @@ public class HomeFragment extends Fragment {
     }
 
     private void processGetListProductResponse(String serverResponse) {
-        ArrayList<Product> productList = new ArrayList<>();
         if (serverResponse.equals(RESPONSE_ERROR)) {
             showMessage(GET_LIST_PRODUCT_ERROR_MESSAGE);
             return;
         }
 
+        ArrayList<Product> productList = new ArrayList<>();
         if (serverResponse.equals(RESPONSE_NULL_DATA)) {
             setUpProductRecyclerView(productList);
             return;
