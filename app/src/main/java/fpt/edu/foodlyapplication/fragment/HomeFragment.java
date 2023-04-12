@@ -90,13 +90,17 @@ public class HomeFragment extends Fragment {
             return;
         }
 
-        ArrayList<Product> productList = new ArrayList<>();
         if (serverResponse.equals(RESPONSE_NULL_DATA)) {
-            setUpProductRecyclerView(productList);
+            setUpProductRecyclerView(new ArrayList<>());
             return;
         }
 
-        // Parser JSON response form server to product object after add productList
+        ArrayList<Product> productList = parserProductListFormResponse(serverResponse);
+        setUpProductRecyclerView(productList);
+    }
+
+    private ArrayList<Product> parserProductListFormResponse(String serverResponse) {
+        ArrayList<Product> productList = new ArrayList<>();
         try {
             JSONArray jsonArray = new JSONArray(serverResponse);
             for (int i = 0; i < jsonArray.length(); i++) {
@@ -111,11 +115,10 @@ public class HomeFragment extends Fragment {
 
                 productList.add(product);
             }
-
-            setUpProductRecyclerView(productList);
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
+        return productList;
     }
 
     private void setUpProductRecyclerView(ArrayList<Product> productList) {
