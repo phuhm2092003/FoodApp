@@ -80,17 +80,16 @@ public class CartFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_cart, container, false);
-
+        View rootView = inflater.inflate(R.layout.fragment_cart, container, false);
         mainActivity = (MainActivity) getActivity();
         listCart = new ArrayList<>();
         user = new User();
 
-        initView(view);
+        initView(rootView);
         setListeners();
         processGetUserByEmailRequest();
         processGetListCartRequest();
-        return view;
+        return rootView;
     }
 
     private void initView(View view) {
@@ -378,9 +377,10 @@ public class CartFragment extends Fragment {
                 // Add email to request body in server
                 HashMap<String, String> params = new HashMap<>();
                 params.put(PARAM_CUSTOMER_NAME, user.getFullname());
+                // Get date noew
                 Date currentTime = Calendar.getInstance().getTime();
-
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
                 params.put(PRAM_DATE_BUY, simpleDateFormat.format(currentTime).toString());
                 params.put(PRAM_TOTAL, subTotalTextView.getText().toString().substring(1));
                 return params;
