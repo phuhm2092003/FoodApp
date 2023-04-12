@@ -55,14 +55,13 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_home, container, false);
-
+        View rootView = inflater.inflate(R.layout.fragment_home, container, false);
         mainActivity = (MainActivity) getActivity();
 
-        initView(view);
+        initView(rootView);
         processGetListProductRequest();
 
-        return view;
+        return rootView;
     }
 
     private void initView(View view) {
@@ -122,6 +121,7 @@ public class HomeFragment extends Fragment {
     private void setUpProductRecyclerView(ArrayList<Product> productList) {
         LinearLayoutManager layoutManagerProduct = new LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL, false);
         productReycleView.setLayoutManager(layoutManagerProduct);
+
         ProductAdapter productAdapter = new ProductAdapter(productList, new onItemProductClick() {
             @Override
             public void onItemAddProductToCartClick(Product product) {
