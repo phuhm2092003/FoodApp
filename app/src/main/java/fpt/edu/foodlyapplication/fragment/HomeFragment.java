@@ -49,8 +49,6 @@ public class HomeFragment extends Fragment {
     public static final String PARAM_QUATITY = "quantity";
     public static final int QUANTITY_DEFAULT = 1;
     private RecyclerView productReycleView;
-    private ProductAdapter productAdapter;
-    private LinearLayoutManager layoutManagerProduct;
     private MainActivity mainActivity;
 
     @Override
@@ -72,7 +70,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void processGetListProductRequest() {
-        RequestQueue requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
+        RequestQueue requestQueue = Volley.newRequestQueue(requireContext());
         StringRequest getListProductRequest = new StringRequest(Request.Method.POST, ServerURLManger.URL_GET_LIST_PRODUCT, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -110,7 +108,7 @@ public class HomeFragment extends Fragment {
                 product.setImage(jsonObject.getString("Image"));
                 product.setName(jsonObject.getString("Name"));
                 product.setPrice(jsonObject.getInt("Price"));
-                Log.d(TAG, "Object Product: " + product.toString());
+                Log.d(TAG, "Object Product: " + product);
 
                 productList.add(product);
             }
@@ -122,9 +120,9 @@ public class HomeFragment extends Fragment {
     }
 
     private void setUpProductRecyclerView(ArrayList<Product> productList) {
-        layoutManagerProduct = new LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL, false);
+        LinearLayoutManager layoutManagerProduct = new LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL, false);
         productReycleView.setLayoutManager(layoutManagerProduct);
-        productAdapter = new ProductAdapter(productList, new onItemProductClick() {
+        ProductAdapter productAdapter = new ProductAdapter(productList, new onItemProductClick() {
             @Override
             public void onItemAddProductToCartClick(Product product) {
                 processAddProductToCartRequest(product);
