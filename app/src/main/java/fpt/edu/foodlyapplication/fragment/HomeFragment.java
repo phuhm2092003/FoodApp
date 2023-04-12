@@ -159,7 +159,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void processAddProductToCartResponse(String serverResponse) {
-        String message = RESPONSE_SUCCESS.equals(serverResponse) ? ADD_SUCCESS_MESSAGE : ADD_FAILED_MESSAGE;
+        String message = serverResponse.equals(RESPONSE_SUCCESS) ? ADD_SUCCESS_MESSAGE : ADD_FAILED_MESSAGE;
         showMessage(message);
     }
 
