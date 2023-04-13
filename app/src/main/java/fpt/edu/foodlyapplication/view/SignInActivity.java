@@ -70,7 +70,6 @@ public class SignInActivity extends AppCompatActivity {
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Launch Splash Activity
                 startActivity(new Intent(SignInActivity.this, SplashActivity.class));
             }
         });
@@ -91,7 +90,6 @@ public class SignInActivity extends AppCompatActivity {
         signUpTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Launch SignUp Activity
                 startActivity(new Intent(SignInActivity.this, SignUpActivity.class));
             }
         });
@@ -129,7 +127,7 @@ public class SignInActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "Sever error: " + error.toString());
+                Log.e(TAG, error.toString());
             }
         }) {
             @Nullable
