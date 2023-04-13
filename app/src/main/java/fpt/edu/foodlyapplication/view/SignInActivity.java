@@ -109,7 +109,7 @@ public class SignInActivity extends AppCompatActivity {
         if (isEmptyInput(email, password)) {
             showMessage(EMPTY_INPUT_MESSAGE);
         } else {
-            processLoginRequest(email, password);
+            handleLoginRequest(email, password);
         }
     }
 
@@ -117,12 +117,12 @@ public class SignInActivity extends AppCompatActivity {
         return TextUtils.isEmpty(email) || TextUtils.isEmpty(password);
     }
 
-    private void processLoginRequest(String email, String password) {
+    private void handleLoginRequest(String email, String password) {
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         StringRequest loginRequest = new StringRequest(Request.Method.POST, ServerURLManger.URL_LOGIN, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                processLoginResponse(response, email);
+                handleLoginResponse(response, email);
             }
         }, new Response.ErrorListener() {
             @Override
@@ -143,7 +143,7 @@ public class SignInActivity extends AppCompatActivity {
         requestQueue.add(loginRequest);
     }
 
-    private void processLoginResponse(String serverResponse, String email) {
+    private void handleLoginResponse(String serverResponse, String email) {
         if (serverResponse.equals(RESPONSE_SUCCESS)) {
             showMessage(LOGIN_SUCCESS_MESSAGE);
             launchMainActivity(email);
