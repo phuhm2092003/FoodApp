@@ -47,7 +47,6 @@ public class SignInActivity extends AppCompatActivity {
     private ConstraintLayout loginButton;
     private TextView signUpTextView;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
