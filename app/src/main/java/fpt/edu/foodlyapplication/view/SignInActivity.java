@@ -70,6 +70,7 @@ public class SignInActivity extends AppCompatActivity {
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Launch Splash Activity
                 startActivity(new Intent(SignInActivity.this, SplashActivity.class));
             }
         });
@@ -90,6 +91,7 @@ public class SignInActivity extends AppCompatActivity {
         signUpTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Launch SignUp Activity
                 startActivity(new Intent(SignInActivity.this, SignUpActivity.class));
             }
         });
@@ -118,7 +120,7 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     private void processLoginRequest(String email, String password) {
-        RequestQueue requestQueue = Volley.newRequestQueue(SignInActivity.this);
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
         StringRequest loginRequest = new StringRequest(Request.Method.POST, ServerURLManger.URL_LOGIN, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -133,7 +135,7 @@ public class SignInActivity extends AppCompatActivity {
             @Nullable
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
-                // Add email and password in the request body to sever
+                // Add email and password in the request body to server
                 Map<String, String> params = new HashMap<>();
                 params.put(PARAM_EMAIL, email);
                 params.put(PARAM_PASSWORD, password);
