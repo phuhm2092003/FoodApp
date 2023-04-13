@@ -34,7 +34,7 @@ import fpt.edu.foodlyapplication.MainActivity;
 import fpt.edu.foodlyapplication.R;
 import fpt.edu.foodlyapplication.view.UpdateInfoAccountActivity;
 import fpt.edu.foodlyapplication.model.User;
-import fpt.edu.foodlyapplication.utils.ServerURLManger;
+import fpt.edu.foodlyapplication.utils.ServerURLManager;
 import fpt.edu.foodlyapplication.view.SignInActivity;
 
 public class ProfileFragment extends Fragment {
@@ -100,7 +100,7 @@ public class ProfileFragment extends Fragment {
 
     private void processGetUserByEmailRequest() {
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
-        StringRequest getUserByEmail = new StringRequest(Request.Method.POST, ServerURLManger.URL_GET_USER_BY_EMAIL, new Response.Listener<String>() {
+        StringRequest getUserByEmail = new StringRequest(Request.Method.POST, ServerURLManager.URL_GET_USER_BY_EMAIL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 processGetUserByEmailResponse(response);

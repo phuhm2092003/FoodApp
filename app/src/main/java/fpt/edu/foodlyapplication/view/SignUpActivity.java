@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import fpt.edu.foodlyapplication.R;
-import fpt.edu.foodlyapplication.utils.ServerURLManger;
+import fpt.edu.foodlyapplication.utils.ServerURLManager;
 
 public class SignUpActivity extends AppCompatActivity {
     private static final String TAG = "SignUpActivity";
@@ -131,7 +131,7 @@ public class SignUpActivity extends AppCompatActivity {
 
     private void processRegisterRequest(String fullname, String email, String password) {
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-        StringRequest registerRequest = new StringRequest(Request.Method.POST, ServerURLManger.URL_REGISTER_ACCOUNT, new Response.Listener<String>() {
+        StringRequest registerRequest = new StringRequest(Request.Method.POST, ServerURLManager.URL_REGISTER_ACCOUNT, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 processRegisterResponse(response);

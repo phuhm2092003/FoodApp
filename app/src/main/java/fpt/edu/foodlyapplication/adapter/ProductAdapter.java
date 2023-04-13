@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import fpt.edu.foodlyapplication.R;
 import fpt.edu.foodlyapplication.interfaces.onItemProductClick;
 import fpt.edu.foodlyapplication.model.Product;
-import fpt.edu.foodlyapplication.utils.ServerURLManger;
+import fpt.edu.foodlyapplication.utils.ServerURLManager;
 
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductViewHolder> {
     private ArrayList<Product> list;
@@ -47,7 +47,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
                     .into(holder.productImg);
         } else {
             Glide.with(holder.itemView.getContext())
-                    .load(ServerURLManger.URL_BASE + "/" + product.getImage())
+                    .load(ServerURLManager.URL_BASE + "/" + product.getImage())
                     .placeholder(R.drawable.load_image)
                     .into(holder.productImg);
         }

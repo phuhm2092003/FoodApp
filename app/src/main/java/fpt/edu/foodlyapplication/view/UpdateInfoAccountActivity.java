@@ -29,7 +29,7 @@ import java.util.Map;
 import fpt.edu.foodlyapplication.R;
 import fpt.edu.foodlyapplication.fragment.ProfileFragment;
 import fpt.edu.foodlyapplication.model.User;
-import fpt.edu.foodlyapplication.utils.ServerURLManger;
+import fpt.edu.foodlyapplication.utils.ServerURLManager;
 
 public class UpdateInfoAccountActivity extends AppCompatActivity {
     private static final String TAG = "UpdateInfoAccountActivity";
@@ -98,7 +98,7 @@ public class UpdateInfoAccountActivity extends AppCompatActivity {
 
     private void processUpdateFullNameRequest(String emailUser, String fullname) {
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-        StringRequest updateRequest = new StringRequest(Request.Method.POST, ServerURLManger.URL_UPDATE_FULLNAME, new Response.Listener<String>() {
+        StringRequest updateRequest = new StringRequest(Request.Method.POST, ServerURLManager.URL_UPDATE_FULLNAME, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 processUpdateFullNameResponse(response);
@@ -140,7 +140,7 @@ public class UpdateInfoAccountActivity extends AppCompatActivity {
     private void processGetUserByEmailRequest() {
         String emailUser = getIntent().getStringExtra(ProfileFragment.EXTRA_USER_EMAIL);
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-        StringRequest getUserRequest = new StringRequest(Request.Method.POST, ServerURLManger.URL_GET_USER_BY_EMAIL, new Response.Listener<String>() {
+        StringRequest getUserRequest = new StringRequest(Request.Method.POST, ServerURLManager.URL_GET_USER_BY_EMAIL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 processGetUserByEmailResponse(response);

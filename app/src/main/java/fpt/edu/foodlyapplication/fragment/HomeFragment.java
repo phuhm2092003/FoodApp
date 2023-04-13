@@ -34,7 +34,7 @@ import fpt.edu.foodlyapplication.R;
 import fpt.edu.foodlyapplication.adapter.ProductAdapter;
 import fpt.edu.foodlyapplication.interfaces.onItemProductClick;
 import fpt.edu.foodlyapplication.model.Product;
-import fpt.edu.foodlyapplication.utils.ServerURLManger;
+import fpt.edu.foodlyapplication.utils.ServerURLManager;
 
 public class HomeFragment extends Fragment {
     private static final String TAG = "HomeFragment";
@@ -70,7 +70,7 @@ public class HomeFragment extends Fragment {
 
     private void processGetListProductRequest() {
         RequestQueue requestQueue = Volley.newRequestQueue(requireContext());
-        StringRequest getListProductRequest = new StringRequest(Request.Method.POST, ServerURLManger.URL_GET_LIST_PRODUCT, new Response.Listener<String>() {
+        StringRequest getListProductRequest = new StringRequest(Request.Method.POST, ServerURLManager.URL_GET_LIST_PRODUCT, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 processGetListProductResponse(response);
@@ -136,7 +136,7 @@ public class HomeFragment extends Fragment {
 
     private void processAddProductToCartRequest(Product product) {
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
-        StringRequest addProductTocartRequest = new StringRequest(Request.Method.POST, ServerURLManger.URL_ADD_CART, new Response.Listener<String>() {
+        StringRequest addProductTocartRequest = new StringRequest(Request.Method.POST, ServerURLManager.URL_ADD_CART, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 processAddProductToCartResponse(response);

@@ -1,6 +1,6 @@
 package fpt.edu.foodlyapplication.utils;
 
-public class ServerURLManger {
+public class ServerURLManager {
     public static final String URL_BASE = "http://192.168.11.159:3000";
 
     // User URLs

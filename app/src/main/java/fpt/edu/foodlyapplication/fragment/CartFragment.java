@@ -44,7 +44,7 @@ import fpt.edu.foodlyapplication.adapter.CartAdapter;
 import fpt.edu.foodlyapplication.interfaces.onItemCartClick;
 import fpt.edu.foodlyapplication.model.Cart;
 import fpt.edu.foodlyapplication.model.User;
-import fpt.edu.foodlyapplication.utils.ServerURLManger;
+import fpt.edu.foodlyapplication.utils.ServerURLManager;
 
 public class CartFragment extends Fragment {
     public static final String RESPONSE_ERROR = "Error";
@@ -128,7 +128,7 @@ public class CartFragment extends Fragment {
 
     private void processGetUserByEmailRequest() {
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
-        StringRequest getUserByEmail = new StringRequest(Request.Method.POST, ServerURLManger.URL_GET_USER_BY_EMAIL, new Response.Listener<String>() {
+        StringRequest getUserByEmail = new StringRequest(Request.Method.POST, ServerURLManager.URL_GET_USER_BY_EMAIL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 processGetUserByEmailResponse(response);
@@ -157,7 +157,7 @@ public class CartFragment extends Fragment {
             return;
         }
         if (serverResponse.equals(RESPONSE_ERROR)) {
-            Toast.makeText(requireContext(), ServerURLManger.URL_GET_USER_BY_EMAIL, Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), ServerURLManager.URL_GET_USER_BY_EMAIL, Toast.LENGTH_SHORT).show();
             return;
         }
         // Parser Json to user object from response server
@@ -175,7 +175,7 @@ public class CartFragment extends Fragment {
 
     private void processGetListCartRequest() {
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
-        StringRequest getListCartRequest = new StringRequest(Request.Method.POST, ServerURLManger.URL_GET_LIST_CART, new Response.Listener<String>() {
+        StringRequest getListCartRequest = new StringRequest(Request.Method.POST, ServerURLManager.URL_GET_LIST_CART, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 processGetListCartResponse(response);
@@ -297,7 +297,7 @@ public class CartFragment extends Fragment {
 
     private void processDeleteCartRequest(Cart cart) {
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
-        StringRequest deleteCartRequest = new StringRequest(Request.Method.POST, ServerURLManger.URL_DELETE_CART_BY_ID, new Response.Listener<String>() {
+        StringRequest deleteCartRequest = new StringRequest(Request.Method.POST, ServerURLManager.URL_DELETE_CART_BY_ID, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 if (response.equals(RESPONSE_SUCCESS)) {
@@ -326,7 +326,7 @@ public class CartFragment extends Fragment {
 
     private void processUpdateQuantityCart(int numberOfCart, Cart cart1) {
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
-        StringRequest updateQuantityRequest = new StringRequest(Request.Method.POST, ServerURLManger.URL_UPDATE_QUANTITY_CART, new Response.Listener<String>() {
+        StringRequest updateQuantityRequest = new StringRequest(Request.Method.POST, ServerURLManager.URL_UPDATE_QUANTITY_CART, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 if (response.equals(RESPOSE_CART_NULL) || response.equals(RESPONSE_ERROR)) {
@@ -355,7 +355,7 @@ public class CartFragment extends Fragment {
 
     private void processPayBillRequest() {
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
-        StringRequest addBillRequest = new StringRequest(Request.Method.POST, ServerURLManger.URL_ADD_BILL, new Response.Listener<String>() {
+        StringRequest addBillRequest = new StringRequest(Request.Method.POST, ServerURLManager.URL_ADD_BILL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 if (response.equals(RESPONSE_SUCCESS)) {
@@ -391,7 +391,7 @@ public class CartFragment extends Fragment {
 
     private void processDeleteCartByEmailRequest() {
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
-        StringRequest deleteCartRequest = new StringRequest(Request.Method.POST, ServerURLManger.URL_DELETE_CART_BY_EMAIL, new Response.Listener<String>() {
+        StringRequest deleteCartRequest = new StringRequest(Request.Method.POST, ServerURLManager.URL_DELETE_CART_BY_EMAIL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 if (response.equals(RESPONSE_SUCCESS)) {

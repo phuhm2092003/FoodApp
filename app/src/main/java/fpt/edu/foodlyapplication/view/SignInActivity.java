@@ -30,7 +30,7 @@ import java.util.Map;
 
 import fpt.edu.foodlyapplication.MainActivity;
 import fpt.edu.foodlyapplication.R;
-import fpt.edu.foodlyapplication.utils.ServerURLManger;
+import fpt.edu.foodlyapplication.utils.ServerURLManager;
 
 public class SignInActivity extends AppCompatActivity {
     private static final String TAG = "SignInActivity";
@@ -119,7 +119,7 @@ public class SignInActivity extends AppCompatActivity {
 
     private void handleLoginRequest(String email, String password) {
         RequestQueue requestQueue = Volley.newRequestQueue(this);
-        StringRequest loginRequest = new StringRequest(Request.Method.POST, ServerURLManger.URL_LOGIN, new Response.Listener<String>() {
+        StringRequest loginRequest = new StringRequest(Request.Method.POST, ServerURLManager.URL_LOGIN, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 handleLoginResponse(response, email);
