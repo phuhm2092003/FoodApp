@@ -172,7 +172,7 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     private void showMessage(String userExistsMessage) {
-        Toast.makeText(getApplicationContext(), userExistsMessage, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, userExistsMessage, Toast.LENGTH_SHORT).show();
     }
 
     private void clearTextFields() {
