@@ -71,7 +71,7 @@ public class SignUpActivity extends AppCompatActivity {
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(getApplicationContext(), SignInActivity.class));
+                startActivity(new Intent(SignUpActivity.this, SignInActivity.class));
             }
         });
 
@@ -91,7 +91,7 @@ public class SignUpActivity extends AppCompatActivity {
         signInTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(getApplicationContext(), SignInActivity.class));
+                startActivity(new Intent(SignUpActivity.this, SignInActivity.class));
             }
         });
 
@@ -130,7 +130,7 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     private void handleRegisterAccountRequest(String fullname, String email, String password) {
-        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
         StringRequest registerRequest = new StringRequest(Request.Method.POST, ServerURLManager.URL_REGISTER_ACCOUNT, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
