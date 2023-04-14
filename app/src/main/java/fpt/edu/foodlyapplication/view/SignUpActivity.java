@@ -38,8 +38,8 @@ public class SignUpActivity extends AppCompatActivity {
     public static final String USER_EXISTS_MESSAGE = "User already exists";
     public static final String REGISTER_SUCCESS_MESSAGE = "Register new account successfull";
     public static final String REGISTER_FAILED_MESSAGE = "Register new account failed";
-    public static final String RESPONSE_USER_EXISTS = "User Exists";
-    public static final String RESPONSE_SUCCESS = "Successful";
+    public static final String RESPONSE_USER_EXISTS = "User exists";
+    public static final String RESPONSE_SUCCESS = "Successfully";
     public static final String PARAM_EMAIL = "email";
     public static final String PARAM_FULLNAME = "fullname";
     public static final String PARAM_PASSWORD = "password";
@@ -118,7 +118,7 @@ public class SignUpActivity extends AppCompatActivity {
             return;
         }
 
-        processRegisterRequest(fullname, email, password);
+        handleRegisterAccountRequest(fullname, email, password);
     }
 
     private boolean isEmptyInput(String fullname, String email, String password) {
@@ -129,12 +129,12 @@ public class SignUpActivity extends AppCompatActivity {
         return !email.matches(EMAIL_REGEX_PATTERN);
     }
 
-    private void processRegisterRequest(String fullname, String email, String password) {
+    private void handleRegisterAccountRequest(String fullname, String email, String password) {
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
         StringRequest registerRequest = new StringRequest(Request.Method.POST, ServerURLManager.URL_REGISTER_ACCOUNT, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                processRegisterResponse(response);
+                handleRegisterAccountResponse(response);
             }
         }, new Response.ErrorListener() {
             @Override
@@ -156,7 +156,7 @@ public class SignUpActivity extends AppCompatActivity {
         requestQueue.add(registerRequest);
     }
 
-    private void processRegisterResponse(String serverResponse) {
+    private void handleRegisterAccountResponse(String serverResponse) {
         switch (serverResponse) {
             case RESPONSE_USER_EXISTS:
                 showMessage(USER_EXISTS_MESSAGE);
