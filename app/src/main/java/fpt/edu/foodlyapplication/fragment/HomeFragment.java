@@ -40,7 +40,7 @@ public class HomeFragment extends Fragment {
     private static final String TAG = "HomeFragment";
     private static final String RESPONSE_NULL_DATA = "List product null";
     private static final String RESPONSE_ERROR = "Error";
-    public static final String RESPONSE_SUCCESS = "Successful";
+    public static final String RESPONSE_SUCCESS = "Successfully";
     public static final String ADD_SUCCESS_MESSAGE = "Add Product to cart successful";
     public static final String GET_LIST_PRODUCT_ERROR_MESSAGE = "Get list product error";
     public static final String ADD_FAILED_MESSAGE = "Add Product to cart failed";
@@ -54,12 +54,11 @@ public class HomeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_home, container, false);
         mainActivity = (MainActivity) getActivity();
 
         initView(rootView);
-        processGetListProductRequest();
+        handleGetListProductRequest();
 
         return rootView;
     }
@@ -68,23 +67,23 @@ public class HomeFragment extends Fragment {
         productReycleView = (RecyclerView) view.findViewById(R.id.productReycleView);
     }
 
-    private void processGetListProductRequest() {
+    private void handleGetListProductRequest() {
         RequestQueue requestQueue = Volley.newRequestQueue(requireContext());
         StringRequest getListProductRequest = new StringRequest(Request.Method.POST, ServerURLManager.URL_GET_LIST_PRODUCT, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                processGetListProductResponse(response);
+                handleGetListProductResponse(response);
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "Server error: " + error.toString());
+                Log.e(TAG, error.toString());
             }
         });
         requestQueue.add(getListProductRequest);
     }
 
-    private void processGetListProductResponse(String serverResponse) {
+    private void handleGetListProductResponse(String serverResponse) {
         if (serverResponse.equals(RESPONSE_ERROR)) {
             showMessage(GET_LIST_PRODUCT_ERROR_MESSAGE);
             return;
@@ -95,24 +94,22 @@ public class HomeFragment extends Fragment {
             return;
         }
 
-        ArrayList<Product> productList = parserProductListFormResponse(serverResponse);
+        ArrayList<Product> productList = parseProductListFromResponse(serverResponse);
         setUpProductRecyclerView(productList);
     }
 
-    private ArrayList<Product> parserProductListFormResponse(String serverResponse) {
+    private ArrayList<Product> parseProductListFromResponse(String serverResponse) {
         ArrayList<Product> productList = new ArrayList<>();
         try {
             JSONArray jsonArray = new JSONArray(serverResponse);
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
-
                 Product product = new Product();
                 product.setId(jsonObject.getInt("Id"));
                 product.setImage(jsonObject.getString("Image"));
                 product.setName(jsonObject.getString("Name"));
                 product.setPrice(jsonObject.getInt("Price"));
-                Log.d(TAG, "Object Product: " + product);
-
+                Log.d(TAG, "Parsed response: " + product);
                 productList.add(product);
             }
         } catch (JSONException e) {
@@ -128,23 +125,23 @@ public class HomeFragment extends Fragment {
         ProductAdapter productAdapter = new ProductAdapter(productList, new onItemProductClick() {
             @Override
             public void onItemAddProductToCartClick(Product product) {
-                processAddProductToCartRequest(product);
+                handleAddProductToCartRequest(product);
             }
         });
         productReycleView.setAdapter(productAdapter);
     }
 
-    private void processAddProductToCartRequest(Product product) {
-        RequestQueue requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
-        StringRequest addProductTocartRequest = new StringRequest(Request.Method.POST, ServerURLManager.URL_ADD_CART, new Response.Listener<String>() {
+    private void handleAddProductToCartRequest(Product product) {
+        RequestQueue requestQueue = Volley.newRequestQueue(requireContext());
+        StringRequest addProductToCartRequest = new StringRequest(Request.Method.POST, ServerURLManager.URL_ADD_CART, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                processAddProductToCartResponse(response);
+                handleAddProductToCartResponse(response);
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "Server error: " + error.toString());
+                Log.e(TAG, error.toString());
             }
         }) {
             @Nullable
@@ -158,22 +155,21 @@ public class HomeFragment extends Fragment {
                 return params;
             }
         };
-        requestQueue.add(addProductTocartRequest);
+        requestQueue.add(addProductToCartRequest);
     }
 
-    private void processAddProductToCartResponse(String serverResponse) {
+    private void handleAddProductToCartResponse(String serverResponse) {
         String message = serverResponse.equals(RESPONSE_SUCCESS) ? ADD_SUCCESS_MESSAGE : ADD_FAILED_MESSAGE;
         showMessage(message);
     }
 
     private void showMessage(String message) {
-        Toast.makeText(getActivity().getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        processGetListProductRequest();
+        handleGetListProductRequest();
     }
-
 }
