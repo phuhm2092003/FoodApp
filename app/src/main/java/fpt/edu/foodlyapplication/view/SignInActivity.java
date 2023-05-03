@@ -4,13 +4,14 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
-import android.view.View;
+
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -20,8 +21,7 @@ import android.widget.Toast;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
+
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
@@ -37,7 +37,7 @@ public class SignInActivity extends AppCompatActivity {
     public static final String PARAM_EMAIL = "email";
     public static final String PARAM_PASSWORD = "password";
     public static final String EXTRA_USER_EMAIL = "EmailUser";
-    public static final String RESPONSE_SUCCESS = "Successfully";
+    public static final String RESPONSE_SUCCESS = "Success";
     public static final String LOGIN_FAILED_MESSAGE = "Login failed";
     public static final String LOGIN_SUCCESS_MESSAGE = "Login successfully";
     public static final String EMPTY_INPUT_MESSAGE = "Please enter both email and password";
@@ -57,59 +57,51 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     private void initView() {
-        backButton = (ImageView) findViewById(R.id.backButton);
-        passwordToggleButton = (ImageView) findViewById(R.id.passwordToggleButton);
-        emailEditText = (EditText) findViewById(R.id.emailEditText);
-        passwordEditText = (EditText) findViewById(R.id.passwordEditText);
-        loginButton = (ConstraintLayout) findViewById(R.id.loginButton);
-        signUpTextView = (TextView) findViewById(R.id.signUpTextView);
+        backButton = findViewById(R.id.backButton);
+        passwordToggleButton = findViewById(R.id.passwordToggleButton);
+        emailEditText = findViewById(R.id.emailEditText);
+        passwordEditText = findViewById(R.id.passwordEditText);
+        loginButton = findViewById(R.id.loginButton);
+        signUpTextView = findViewById(R.id.signUpTextView);
     }
 
     private void setListeners() {
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(SignInActivity.this, SplashActivity.class));
-            }
-        });
-
-        passwordToggleButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (passwordEditText.getTransformationMethod().equals(HideReturnsTransformationMethod.getInstance())) {
-                    passwordEditText.setTransformationMethod(PasswordTransformationMethod.getInstance());
-                    passwordToggleButton.setImageResource(R.drawable.ic_password_hide);
-                } else {
-                    passwordEditText.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
-                    passwordToggleButton.setImageResource(R.drawable.ic_password_show);
-                }
-            }
-        });
-
-        signUpTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(SignInActivity.this, SignUpActivity.class));
-            }
-        });
-
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                validateLoginForm();
-            }
-        });
+        backButton.setOnClickListener(view -> startSplashScreen());
+        passwordToggleButton.setOnClickListener(view -> handlePasswordToggleButtonClicked());
+        signUpTextView.setOnClickListener(view -> startSignUpScreen());
+        loginButton.setOnClickListener(view -> validateLoginInput());
     }
 
-    private void validateLoginForm() {
+    private void startSplashScreen() {
+        Intent intent = new Intent(this, SplashActivity.class);
+        startActivity(intent);
+    }
+
+    private void handlePasswordToggleButtonClicked() {
+        if (passwordEditText.getTransformationMethod().equals(HideReturnsTransformationMethod.getInstance())) {
+            passwordEditText.setTransformationMethod(PasswordTransformationMethod.getInstance());
+            passwordToggleButton.setImageResource(R.drawable.ic_password_hide);
+        } else {
+            passwordEditText.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+            passwordToggleButton.setImageResource(R.drawable.ic_password_show);
+        }
+    }
+
+    private void startSignUpScreen() {
+        Intent intent = new Intent(this, SignUpActivity.class);
+        startActivity(intent);
+    }
+
+    private void validateLoginInput() {
         String email = emailEditText.getText().toString().trim();
         String password = passwordEditText.getText().toString().trim();
 
         if (isEmptyInput(email, password)) {
             showMessage(EMPTY_INPUT_MESSAGE);
-        } else {
-            handleLoginRequest(email, password);
+            return;
         }
+
+        handleLoginRequest(email, password);
     }
 
     private boolean isEmptyInput(String email, String password) {
@@ -118,17 +110,9 @@ public class SignInActivity extends AppCompatActivity {
 
     private void handleLoginRequest(String email, String password) {
         RequestQueue requestQueue = Volley.newRequestQueue(this);
-        StringRequest loginRequest = new StringRequest(Request.Method.POST, ServerURLManager.URL_LOGIN, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                handleLoginResponse(response, email);
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, error.toString());
-            }
-        }) {
+        StringRequest loginRequest = new StringRequest(Request.Method.POST, ServerURLManager.URL_LOGIN,
+                response -> handleLoginResponse(response, email),
+                error -> Log.e(TAG, error.toString())) {
             @Nullable
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
@@ -145,13 +129,13 @@ public class SignInActivity extends AppCompatActivity {
     private void handleLoginResponse(String serverResponse, String email) {
         if (serverResponse.equals(RESPONSE_SUCCESS)) {
             showMessage(LOGIN_SUCCESS_MESSAGE);
-            launchMainActivity(email);
+            startMainScreen(email);
         } else {
             showMessage(LOGIN_FAILED_MESSAGE);
         }
     }
 
-    private void launchMainActivity(String email) {
+    private void startMainScreen(String email) {
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra(EXTRA_USER_EMAIL, email);
         startActivity(intent);
@@ -159,5 +143,10 @@ public class SignInActivity extends AppCompatActivity {
 
     private void showMessage(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onBackPressed() {
+        startSplashScreen();
     }
 }
