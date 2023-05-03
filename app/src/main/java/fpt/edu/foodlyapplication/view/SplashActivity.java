@@ -11,7 +11,6 @@ import fpt.edu.foodlyapplication.R;
 
 @SuppressLint("CustomSplashScreen")
 public class SplashActivity extends AppCompatActivity {
-
     public static final int TIME_DELAY = 2000;
 
     @Override
