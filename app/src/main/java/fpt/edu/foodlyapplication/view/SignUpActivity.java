@@ -10,7 +10,6 @@ import android.text.TextUtils;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -36,10 +35,10 @@ public class SignUpActivity extends AppCompatActivity {
     public static final String EMPTY_INPUT_MESSAGE = "Please enter both fullname, email and password";
     public static final String INVALID_EMAIL_MESSAGE = "Please enter a valid email address";
     public static final String USER_EXISTS_MESSAGE = "User already exists";
-    public static final String REGISTER_SUCCESS_MESSAGE = "Register new account successfull";
+    public static final String REGISTER_SUCCESS_MESSAGE = "Register new account successfully";
     public static final String REGISTER_FAILED_MESSAGE = "Register new account failed";
     public static final String RESPONSE_USER_EXISTS = "User exists";
-    public static final String RESPONSE_SUCCESS = "Successfully";
+    public static final String RESPONSE_SUCCESS = "Success";
     public static final String PARAM_EMAIL = "email";
     public static final String PARAM_FULLNAME = "fullname";
     public static final String PARAM_PASSWORD = "password";
@@ -58,52 +57,38 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     private void initView() {
-        backButton = (ImageView) findViewById(R.id.backButton);
-        passwordToggleButton = (ImageView) findViewById(R.id.passwordToggleButton);
-        fullnameEditText = (EditText) findViewById(R.id.fullnameEditText);
-        emailEditText = (EditText) findViewById(R.id.emailEditText);
-        passwordEditText = (EditText) findViewById(R.id.passwordEditText);
-        registerButton = (ConstraintLayout) findViewById(R.id.registerButton);
-        signInTextView = (TextView) findViewById(R.id.signInTextView);
+        backButton = findViewById(R.id.backButton);
+        passwordToggleButton = findViewById(R.id.passwordToggleButton);
+        fullnameEditText = findViewById(R.id.fullnameEditText);
+        emailEditText = findViewById(R.id.emailEditText);
+        passwordEditText = findViewById(R.id.passwordEditText);
+        registerButton = findViewById(R.id.registerButton);
+        signInTextView = findViewById(R.id.signInTextView);
     }
 
     private void setListeners() {
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(SignUpActivity.this, SignInActivity.class));
-            }
-        });
-
-        passwordToggleButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (passwordEditText.getTransformationMethod().equals(HideReturnsTransformationMethod.getInstance())) {
-                    passwordEditText.setTransformationMethod(PasswordTransformationMethod.getInstance());
-                    passwordToggleButton.setImageResource(R.drawable.ic_password_hide);
-                } else {
-                    passwordEditText.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
-                    passwordToggleButton.setImageResource(R.drawable.ic_password_show);
-                }
-            }
-        });
-
-        signInTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(SignUpActivity.this, SignInActivity.class));
-            }
-        });
-
-        registerButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                validateRegisterForm();
-            }
-        });
+        backButton.setOnClickListener(view -> startSignInScreen());
+        passwordToggleButton.setOnClickListener(view -> handlePasswordToggleButtonClicked());
+        signInTextView.setOnClickListener(view -> startSignInScreen());
+        registerButton.setOnClickListener(view -> validateRegisterAccountInput());
     }
 
-    private void validateRegisterForm() {
+    private void startSignInScreen() {
+        Intent intent = new Intent(this, SignInActivity.class);
+        startActivity(intent);
+    }
+
+    private void handlePasswordToggleButtonClicked() {
+        if (passwordEditText.getTransformationMethod().equals(HideReturnsTransformationMethod.getInstance())) {
+            passwordEditText.setTransformationMethod(PasswordTransformationMethod.getInstance());
+            passwordToggleButton.setImageResource(R.drawable.ic_password_hide);
+        } else {
+            passwordEditText.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+            passwordToggleButton.setImageResource(R.drawable.ic_password_show);
+        }
+    }
+
+    private void validateRegisterAccountInput() {
         String email = emailEditText.getText().toString().trim();
         String fullname = fullnameEditText.getText().toString().trim();
         String password = passwordEditText.getText().toString().trim();
@@ -131,17 +116,9 @@ public class SignUpActivity extends AppCompatActivity {
 
     private void handleRegisterAccountRequest(String fullname, String email, String password) {
         RequestQueue requestQueue = Volley.newRequestQueue(this);
-        StringRequest registerRequest = new StringRequest(Request.Method.POST, ServerURLManager.URL_REGISTER_ACCOUNT, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                handleRegisterAccountResponse(response);
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "Sever error: " + error.toString());
-            }
-        }) {
+        StringRequest registerAccountRequest = new StringRequest(Request.Method.POST, ServerURLManager.URL_REGISTER_ACCOUNT,
+                response -> handleRegisterAccountResponse(response),
+                error -> Log.e(TAG, error.toString())) {
             @Nullable
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
@@ -153,7 +130,7 @@ public class SignUpActivity extends AppCompatActivity {
                 return params;
             }
         };
-        requestQueue.add(registerRequest);
+        requestQueue.add(registerAccountRequest);
     }
 
     private void handleRegisterAccountResponse(String serverResponse) {
@@ -171,8 +148,8 @@ public class SignUpActivity extends AppCompatActivity {
         }
     }
 
-    private void showMessage(String userExistsMessage) {
-        Toast.makeText(this, userExistsMessage, Toast.LENGTH_SHORT).show();
+    private void showMessage(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     private void clearTextFields() {
